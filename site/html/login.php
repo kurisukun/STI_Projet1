@@ -91,7 +91,7 @@
                   $_SESSION['username'] = 'tutorialspoint';
                   
                   echo 'You have entered valid use name and password';
-                  header('Refresh: 0; URL = helloworld.php');
+                  header('Refresh: 0; URL = message.php');
                }else {
                   $msg = 'Wrong username or password';
                }
