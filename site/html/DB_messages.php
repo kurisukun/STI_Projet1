@@ -23,12 +23,18 @@ try {
      * Create tables                       *
      **************************************/
 
+    /**************************************
+     * Drop tables                         *
+     **************************************/
+
+    // Drop table messages from file db
+    $file_db->exec("DROP TABLE IF EXISTS messages");
     // Create table messages
     $file_db->exec("CREATE TABLE IF NOT EXISTS messages (
                     id INTEGER PRIMARY KEY, 
                     title TEXT, 
-                    message TEXT, 
-                    time TEXT)");
+                    content TEXT, 
+                    time_value TEXT)");
 
     /**************************************
      * Set initial data                    *
@@ -37,14 +43,14 @@ try {
     // Array with some test data to insert to database
     $messages = array(
         array('title' => 'Hello!',
-            'message' => 'Just testing...',
-            'time' => 1327301464),
+            'content' => 'Just testing...',
+            'time_value' => 1327301464),
         array('title' => 'Hello again!',
-            'message' => 'More testing...',
-            'time' => 1339428612),
+            'content' => 'More testing...',
+            'time_value' => 1339428612),
         array('title' => 'Hi!',
-            'message' => 'SQLite3 is cool...',
-            'time' => 1327214268)
+            'content' => 'SQLite3 is cool...',
+            'time_value' => 1327214268)
     );
 
 
@@ -53,9 +59,9 @@ try {
      **************************************/
 
     foreach ($messages as $m) {
-        $formatted_time = date('Y-m-d H:i:s', $m['time']);
-        $file_db->exec("INSERT INTO messages (title, message, time) 
-                VALUES ('{$m['title']}', '{$m['message']}', '{$formatted_time}')");
+        $formatted_time = date('Y-m-d H:i:s', $m['time_value']);
+        $file_db->exec("INSERT INTO messages (title, content, time_value) 
+                VALUES ('{$m['title']}', '{$m['content']}', '{$formatted_time}')");
     }
 
     $result = $file_db->query('SELECT * FROM messages');
@@ -63,18 +69,11 @@ try {
     foreach ($result as $row) {
         echo "Id: " . $row['id'] . "<br/>";
         echo "Title: " . $row['title'] . "<br/>";
-        echo "Message: " . $row['message'] . "<br/>";
-        echo "Time: " . $row['time'] . "<br/>";
+        echo "Message: " . $row['content'] . "<br/>";
+        echo "Time: " . $row['time_value'] . "<br/>";
         echo "<br/>";
     }
 
-
-    /**************************************
-     * Drop tables                         *
-     **************************************/
-
-    // Drop table messages from file db
-    $file_db->exec("DROP TABLE messages");
 
     /**************************************
      * Close db connections                *
