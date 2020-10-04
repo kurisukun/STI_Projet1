@@ -23,6 +23,9 @@ try {
      * Create tables                       *
      **************************************/
 
+    // Drop table messages from file db
+    $file_db->exec("DROP TABLE IF EXISTS collaborators");
+
     // Create table messages
     $file_db->exec("CREATE TABLE IF NOT EXISTS collaborators (
                     id INTEGER PRIMARY KEY, 
@@ -36,7 +39,7 @@ try {
      **************************************/
 
     // Array with some test data to insert to database
-    $messages = array(
+    $user = array(
         array('admin' => true,
             'login' => 'admin',
             'password' => 'passw0rd',
@@ -48,14 +51,14 @@ try {
      * Play with databases and tables      *
      **************************************/
 
-    foreach ($messages as $m) {
+    foreach ($user as $m) {
         $file_db->exec("INSERT INTO collaborators (admin, login, password, validity) 
                 VALUES ('{$m['admin']}', '{$m['login']}', '{$m['password']}', '{$m['validity']}')");
     }
 
-    $result =  $file_db->query('SELECT * FROM collaborators');
+    $result = $file_db->query('SELECT * FROM collaborators');
 
-    foreach($result as $row) {
+    foreach ($result as $row) {
         echo "Id: " . $row['id'] . "<br/>";
         echo "Admin: " . $row['admin'] . "<br/>";
         echo "Login: " . $row['login'] . "<br/>";
@@ -70,16 +73,15 @@ try {
      **************************************/
 
     // Drop table messages from file db
-    $file_db->exec("DROP TABLE collaborators");
+    //$file_db->exec("DROP TABLE collaborators");
 
     /**************************************
      * Close db connections                *
      **************************************/
 
     // Close file db connection
-    $file_db = null;
-}
-catch(PDOException $e) {
+    //$file_db = null;
+} catch (PDOException $e) {
     // Print PDOException message
     echo $e->getMessage();
 }

@@ -58,9 +58,9 @@ try {
                 VALUES ('{$m['title']}', '{$m['message']}', '{$formatted_time}')");
     }
 
-    $result =  $file_db->query('SELECT * FROM messages');
+    $result = $file_db->query('SELECT * FROM messages');
 
-    foreach($result as $row) {
+    foreach ($result as $row) {
         echo "Id: " . $row['id'] . "<br/>";
         echo "Title: " . $row['title'] . "<br/>";
         echo "Message: " . $row['message'] . "<br/>";
@@ -82,8 +82,7 @@ try {
 
     // Close file db connection
     $file_db = null;
-}
-catch(PDOException $e) {
+} catch (PDOException $e) {
     // Print PDOException message
     echo $e->getMessage();
 }
