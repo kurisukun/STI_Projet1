@@ -13,12 +13,6 @@ session_start();
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body {
-            padding-top: 40px;
-            padding-bottom: 40px;
-            background-color: #ADABAB;
-        }
-
         .form-signin {
             max-width: 330px;
             padding: 15px;
@@ -99,6 +93,7 @@ session_start();
         $username = $_POST['username'];
         $password = $_POST['password'];
         $row = array('count' => 1);
+        $query = array(1 => 2);
         try{
             $query=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username' AND `password`='$password'");
             $row = $query->fetch();
@@ -108,12 +103,14 @@ session_start();
         }
         $count=$row['count'];
         if ($count == 1) {
-            echo $username;
+            $query=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username' AND `password`='$password'");
+            $row = $query->fetch();
             $_SESSION['username'] = $_POST['username'];
-            $_SESSION['admin'] = true;
-
+            if($row['admin'] == 1){
+                $_SESSION['admin'] = $row['admin'];
+            }
             echo 'You have entered valid use name and password';
-            header('Refresh: 0; URL = message.php');
+            //header('Refresh: 0; URL = message.php');
         } else {
             echo "<br/>";
             echo 'Wrong username or password';
@@ -129,7 +126,7 @@ session_start();
           ?>" method="post">
         <h4 class="form-signin-heading"><?php echo $msg; ?></h4>
         <input type="text" class="form-control"
-               name="username" placeholder="username = sti_admin"
+               name="username" placeholder="username = admin"
                required autofocus></br>
         <input type="password" class="form-control"
                name="password" placeholder="password = passw0rd" required>
