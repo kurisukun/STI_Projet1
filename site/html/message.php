@@ -10,9 +10,9 @@ session_start();
     </title>
 </head>
 <body>
-<?php include("header.html")?>
 <?php
-include 'redirect.php'
+    include("header.html");
+    include('redirect.php');
 ?>
 <form action="index.php" method="get">
     <input type="text" name="user"/>
