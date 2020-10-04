@@ -72,6 +72,7 @@ session_start();
 </head>
 
 <body>
+<?php include("header.html")?>
 
 <h2>Enter Username and Password</h2>
 <div class="container form-signin">
@@ -105,12 +106,11 @@ session_start();
             // Print PDOException message
             echo $e->getMessage();
         }
-
         $count=$row['count'];
         if ($count == 1) {
+            echo $username;
             $_SESSION['username'] = $_POST['username'];
             $_SESSION['admin'] = true;
-
 
             echo 'You have entered valid use name and password';
             header('Refresh: 0; URL = message.php');
@@ -137,9 +137,6 @@ session_start();
                 name="login">Login
         </button>
     </form>
-
-    Click here to <a href="logout.php" tite="Logout">Log out.
-
 </div>
 
 </body>
