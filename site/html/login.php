@@ -3,11 +3,6 @@ ob_start();
 session_start();
 ?>
 
-<?
-// error_reporting(E_ALL);
-// ini_set("display_errors", 1);
-?>
-
 <html lang="fr">
 <title>
     Page de login
@@ -113,8 +108,9 @@ session_start();
 
         $count=$row['count'];
         if ($count == 1) {
-            $_SESSION['valid'] = true;
             $_SESSION['username'] = $_POST['username'];
+            $_SESSION['admin'] = true;
+
 
             echo 'You have entered valid use name and password';
             header('Refresh: 0; URL = message.php');
