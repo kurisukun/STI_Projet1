@@ -28,9 +28,9 @@ try {
 
     // Create table messages
     $file_db->exec("CREATE TABLE IF NOT EXISTS collaborators (
-                    id INTEGER PRIMARY KEY, 
-                    admin BOOLEAN, 
-                    login TEXT, 
+                    id INTEGER PRIMARY KEY,
+                    admin BOOLEAN,
+                    login TEXT,
                     password TEXT,
                     validity BOOLEAN)");
 
@@ -42,11 +42,11 @@ try {
     $user = array(
         array('admin' => true,
             'login' => 'admin',
-            'password' => 'passw0rd',
+            'password' => password_hash('passw0rd',   PASSWORD_BCRYPT),
             'validity' => true),
         array('chris' => false,
             'login' => 'chris',
-            'password' => 'password',
+            'password' => password_hash('password',   PASSWORD_BCRYPT),
             'validity' => true),
     );
 
@@ -56,7 +56,7 @@ try {
      **************************************/
 
     foreach ($user as $m) {
-        $file_db->exec("INSERT INTO collaborators (admin, login, password, validity) 
+        $file_db->exec("INSERT INTO collaborators (admin, login, password, validity)
                 VALUES ('{$m['admin']}', '{$m['login']}', '{$m['password']}', '{$m['validity']}')");
     }
 

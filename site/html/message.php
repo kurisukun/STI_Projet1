@@ -1,4 +1,5 @@
-<?php include("header.html")?>
+<?php include("header.html");
+include("redirect.php");?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

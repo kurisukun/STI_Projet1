@@ -93,14 +93,16 @@ session_start();
         $row = array('count' => 1);
         $query = array(1 => 2);
         try{
-            $query=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username' AND `password`='$password'");
+            $query=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'");
             $row = $query->fetch();
+            $query_password=$file_db->query("SELECT password FROM collaborators WHERE `login`='$username'");
+            $password_db = $query_password->fetch();
         } catch (Exception $e) {
             // Print PDOException message
             echo $e->getMessage();
         }
         $count=$row['count'];
-        if ($count == 1) {
+        if ($count == 1 && password_verify($password, $password_db['password'])) {
             $query=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username' AND `password`='$password'");
             $row = $query->fetch();
             $_SESSION['username'] = $_POST['username'];
