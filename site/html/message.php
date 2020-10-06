@@ -1,22 +1,24 @@
-<?php
-ob_start();
-session_start();
-?>
-
-<html>
+<?php include("header.html")?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>
-        Gestion des messages
-    </title>
+<meta charset="UTF-8">
+<title>Message</title>
 </head>
 <body>
-<?php
-    include("header.html");
-    include('redirect.php');
-?>
-<form action="index.php" method="get">
-    <input type="text" name="user"/>
-    <input type="submit" value="Envoyer"/>
-</form>
-</body>
+
+<form action="insert.php" method="post">
+    <p>
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title"/>
+        <label for="message">Message</label>
+        <input type="text" name="message" id="message"/>
+    </p>
+
+    <p>
+        <input type="submit" value="Envoyer" />
+    </p>
+ </form>
+
+ </body>
 </html>

@@ -44,6 +44,10 @@ try {
             'login' => 'admin',
             'password' => 'passw0rd',
             'validity' => true),
+        array('chris' => false,
+            'login' => 'chris',
+            'password' => 'password',
+            'validity' => true),
     );
 
 
