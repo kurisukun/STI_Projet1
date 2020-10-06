@@ -1,5 +1,9 @@
-<?php include("header.html");
-include("redirect.php");?>
+<?php
+ob_start();
+session_start();
+include("header.html");
+include("redirect.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

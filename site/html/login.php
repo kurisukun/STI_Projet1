@@ -10,8 +10,6 @@ session_start();
 
 <head>
     <title>Sti_project</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
     <style>
         .form-signin {
             max-width: 330px;
@@ -105,12 +103,12 @@ session_start();
         if ($count == 1 && password_verify($password, $password_db['password'])) {
             $query=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username' AND `password`='$password'");
             $row = $query->fetch();
-            $_SESSION['username'] = $_POST['username'];
+            $_SESSION['username'] = $username;
             if($row['admin'] == 1){
                 $_SESSION['admin'] = $row['admin'];
             }
             echo 'You have entered valid use name and password';
-            //header('Refresh: 0; URL = message.php');
+            header('Refresh: 0; URL = message.php');
         } else {
             echo "<br/>";
             echo 'Wrong username or password';
