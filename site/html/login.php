@@ -87,8 +87,6 @@ session_start();
         PDO::ERRMODE_EXCEPTION);
 
     //$result = $file_db->query('SELECT * FROM collaborators');
-    $msg = '';
-
     if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['password'])) {
         $username = $_POST['username'];
         $password = $_POST['password'];
@@ -124,7 +122,6 @@ session_start();
     <form class="form-signin" role="form"
           action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
           ?>" method="post">
-        <h4 class="form-signin-heading"><?php echo $msg; ?></h4>
         <input type="text" class="form-control"
                name="username" placeholder="username = admin"
                required autofocus></br>
