@@ -31,7 +31,7 @@ include('redirect.php');
         }
 
         if ($row['count'] == 0) {
-            $var = password_hash($_POST['role'],   PASSWORD_BCRYPT) ;
+            $var = password_hash($_POST['password'],   PASSWORD_BCRYPT) ;
             $file_db->exec("INSERT INTO collaborators (admin, login, password, validity)
                         VALUES ('{$_POST['admin']}',
                         '{$_POST['username']}',
@@ -57,7 +57,7 @@ include('redirect.php');
            name="validity" placeholder="Validity" required>
     <button class="btn" type="submit" name="submit">Submit</button>
 </form>
-<h3>Search an User</h3>
+<h2>Search an User</h2>
 <form class="form-signin" role="form"
       action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
       ?>" method="post">
@@ -66,8 +66,8 @@ include('redirect.php');
    <button class="btn" type="search" name="search">Search</button>
 </form>
 <?php
-if (isset($_POST['search']) && !empty($_POST['username'])) {
-    $username = $_POST['username'];
+if (isset($_POST['search']) && !empty($_POST['username-search'])) {
+    $username = $_POST['username-search'];
     $row = array('count' => 1);
     try{
         $query=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'");
@@ -77,16 +77,47 @@ if (isset($_POST['search']) && !empty($_POST['username'])) {
         echo $e->getMessage();
     }
 
-    if ($row['count'] == 0) {
-    $var = password_hash($_POST['role'],   PASSWORD_BCRYPT) ;
-    $file_db->exec("UPDATE collaborators SET ");
+    if ($row['count'] == 1) {
+        echo "<br/>";
+        echo 'It exist!';
     } else {
         echo "<br/>";
-        echo 'Rule not respected';
+        echo 'Sorry, Try again.';
     }
 }
 ?>
 <h2>Modify a user</h2>
+<?php
+    if (isset($_POST['Modifiy'])){
+        $username = $_POST['username-modifier'];
+        $role=$_POST['role-modifier'];
+        $password=$var = password_hash($_POST['password-modifier'],   PASSWORD_BCRYPT) ;;
+        $validity=$_POST['validity-modifier'];
+        if(!empty($_POST['role-modifier'])){
+            $query=$file_db->query("UPDATE collaborators SET admin='$role' WHERE `login`='$username';");
+        }
 
+        if(!empty($_POST['password-modifier'])){
+            $query=$file_db->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
+        }
+
+        if(!empty($_POST['validity-modifier'])){
+            $query=$file_db->query("UPDATE collaborators SET validity='$validity' WHERE `login`='$username';");
+        }
+    }
+?>
+<form class="form-signin" role="form"
+      action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+      ?>" method="post">
+    <input type="text" class="form-control"
+           name="username-modifier" placeholder="Username you want to modify" required>
+    <input type="text" class="form-control"
+           name="role-modifier" placeholder="Role">
+    <input type="password" class="form-control"
+           name="password-modifier" placeholder="Password">
+    <input type="text" class="form-control"
+           name="validity-modifier" placeholder="Validity">
+    <button class="btn" type="Modifiy" name="Modifiy">Modifiy</button>
+</form>
 </body>
 </html>

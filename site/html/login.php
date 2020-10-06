@@ -108,7 +108,7 @@ session_start();
                 $_SESSION['admin'] = $row['admin'];
             }
             echo 'You have entered valid use name and password';
-            //header('Refresh: 0; URL = message.php');
+            header('Refresh: 0; URL = login.php');
         } else {
             echo "<br/>";
             echo 'Wrong username or password';
