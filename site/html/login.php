@@ -101,14 +101,14 @@ session_start();
         }
         $count=$row['count'];
         if ($count == 1 && password_verify($password, $password_db['password'])) {
-            $query=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username' AND `password`='$password'");
+            $query=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username'");
             $row = $query->fetch();
             $_SESSION['username'] = $username;
             if($row['admin'] == 1){
                 $_SESSION['admin'] = $row['admin'];
             }
             echo 'You have entered valid use name and password';
-            header('Refresh: 0; URL = message.php');
+            //header('Refresh: 0; URL = message.php');
         } else {
             echo "<br/>";
             echo 'Wrong username or password';
