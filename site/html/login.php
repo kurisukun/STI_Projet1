@@ -100,7 +100,7 @@ session_start();
             echo $e->getMessage();
         }
         $count=$row['count'];
-        if ($count == 1 && password_verify($password, $password_db['password'])) {
+        if ($count == true && password_verify($password, $password_db['password'])) {
             $query=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username'");
             $row = $query->fetch();
             $_SESSION['username'] = $username;
