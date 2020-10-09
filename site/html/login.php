@@ -2,7 +2,7 @@
 ob_start();
 session_start();
 include("DB.php");
-initialize();
+DB::initialize();
 ?>
 
 <html lang="fr">
@@ -94,14 +94,14 @@ initialize();
         try{
             $query=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'");
             $row = $query->fetch();
-            $query_password=$file_db->query("SELECT password FROM collaborators WHERE `login`='$username'");
+            $query_password=$file_db->query("SELECT password,validity FROM collaborators WHERE `login`='$username'");
             $password_db = $query_password->fetch();
         } catch (Exception $e) {
             // Print PDOException message
             echo $e->getMessage();
         }
         $count=$row['count'];
-        if ($count == true && password_verify($password, $password_db['password'])) {
+        if ($count > 0 && password_verify($password, $password_db['password']) && $password_db['validity'] > 0) {
             $query=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username'");
             $row = $query->fetch();
             $_SESSION['username'] = $username;
@@ -109,7 +109,7 @@ initialize();
                 $_SESSION['admin'] = $row['admin'];
             }
             echo 'You have entered valid use name and password';
-            header('Refresh: 0; URL = login.php');
+            header('Refresh: 1; URL = login.php');
         } else {
             echo "<br/>";
             echo 'Wrong username or password';

@@ -18,9 +18,8 @@ include('redirect.php');
     PDO::ERRMODE_EXCEPTION);
     if (isset($_POST['submit']) &&
         !empty($_POST['username']) &&
-        !empty($_POST['password'])&&
-        !empty($_POST['validity'])&&
-        !empty($_POST['role'])) {
+        !empty($_POST['password'])) {
+
         $username = $_POST['username'];
         $row = array('count' => 1);
         try{
@@ -33,11 +32,32 @@ include('redirect.php');
 
         if ($row['count'] == 0) {
             $var = password_hash($_POST['password'],   PASSWORD_BCRYPT) ;
-            $file_db->exec("INSERT INTO collaborators (admin, login, password, validity)
-                        VALUES ('{$_POST['admin']}',
-                        '{$_POST['username']}',
-                        '{ $var }',
-                        '{$_POST['validity']}')");
+            $request_begin = "INSERT INTO collaborators (";
+            $request_values = ") VALUES (";
+
+            if(!empty($_POST['role'])){
+                $request_begin = $request_begin . "admin,";
+                $request_values = $request_values  . $_POST['role'] . ",";
+            }
+
+            $request_begin = $request_begin . " login, password";
+            $request_values = $request_values  . "'" . $_POST['username'] . "' ,'" . $var. "'";
+
+            if(!empty($_POST['validity'])){
+                $request_begin = $request_begin . ", validity";
+                $request_values = $request_values  . " ," . $_POST['validity'];
+            }
+
+            $request_values = $request_values . ")";
+
+            echo $request_begin . $request_values;
+
+            try{
+                $file_db->exec($request_begin . $request_values);
+            } catch (PDOException $e) {
+                // Print PDOException message
+                echo $e->getMessage();
+            }
         } else {
             echo "<br/>";
             echo 'Username already taken';
@@ -48,14 +68,14 @@ include('redirect.php');
 <form class="form-signin" role="form"
       action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
       ?>" method="post">
-    <input type="text" class="form-control"
-           name="role" placeholder="Role" required>
+    <input type="number" class="form-control"
+           name="role" placeholder="Role" >
     <input type="text" class="form-control"
            name="username" placeholder="Username" required>
     <input type="password" class="form-control"
            name="password" placeholder="Password" required>
-    <input type="text" class="form-control"
-           name="validity" placeholder="Validity" required>
+    <input type="number" class="form-control"
+           name="validity" placeholder="Validity" >
     <button class="btn" type="submit" name="submit">Submit</button>
 </form>
 <h2>Search an User</h2>
