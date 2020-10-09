@@ -1,6 +1,8 @@
 <?php
 ob_start();
 session_start();
+include("DB.php");
+initialize();
 ?>
 
 <html lang="fr">
@@ -60,11 +62,10 @@ session_start();
             color: #017572;
         }
     </style>
-
 </head>
 
 <body>
-<?php include("header.html")?>
+<?php include("header.html") ?>
 
 <h2>Enter Username and Password</h2>
 <div class="container form-signin">
