@@ -38,7 +38,9 @@ class DB{
                             id INTEGER PRIMARY KEY, 
                             title TEXT, 
                             content TEXT, 
-                            time_value TEXT)");
+                            time_value TEXT,
+                            idExpediteur INTEGER,
+                            idDestinataire INTEGER)");
 
             /**************************************
              * Set initial data                    *
@@ -54,19 +56,29 @@ class DB{
                     'login' => 'chris',
                     'password' => password_hash('password',   PASSWORD_BCRYPT),
                     'validity' => 1),
+                array('admin' => 0,
+                    'login' => 'jerome',
+                    'password' => password_hash('password',   PASSWORD_BCRYPT),
+                    'validity' => 1),
             );
 
             // Array with some test data to insert to database
             $messages = array(
                 array('title' => 'Hello!',
                     'content' => 'Just testing...',
-                    'time_value' => 1327301464),
+                    'time_value' => 1327301464,
+                    'idExpediteur' => 2,
+                    'idDestinataire' => 3),
                 array('title' => 'Hello again!',
                     'content' => 'More testing...',
-                    'time_value' => 1339428612),
-                array('title' => 'Hi!',
-                    'content' => 'SQLite3 is cool...',
-                    'time_value' => 1327214268)
+                    'time_value' => 1339428612,
+                    'idExpediteur' => 2,
+                    'idDestinataire' => 3),
+                array('title' => 'Euh!',
+                    'content' => 'Hello',
+                    'time_value' => 1339428718,
+                    'idExpediteur' => 3,
+                    'idDestinataire' => 2)
             );
 
             /**************************************
@@ -80,8 +92,12 @@ class DB{
 
             foreach ($messages as $m) {
                 $formatted_time = date('Y-m-d H:i:s', $m['time_value']);
-                $file_db->exec("INSERT INTO messages (title, content, time_value) 
-                        VALUES ('{$m['title']}', '{$m['content']}', '{$formatted_time}')");
+                $file_db->exec("INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) 
+                        VALUES ('{$m['title']}',
+                                '{$m['content']}', 
+                                '{$formatted_time}',
+                                '{$m['idExpediteur']}',
+                                '{$m['idDestinataire']}')");
             }
 
             /**************************************
