@@ -58,29 +58,29 @@ include("redirect.php");
         
             <div class='card-footer text-center'>
                 <p>
-                    <form action='<?php echo htmlspecialchars({$_SERVER['PHP_SELF']});?>' method='post'>
-                        <input id='quoteid' name='{$row['id']}' value='{$row['id']}'/>
-                        <input class='btn btn-dark' name='answer' value='Answer' type='button'/>    
-                        <input class='btn btn-danger' name='delete' value='Delete' type='button'/>    
+                    <form action='' method='post'>
+                        <input id='messageid' name='messageid' value='{$row['id']}'/>
+                        <input class='btn btn-dark' name='answer' value='Answer' type='submit'/>    
+                        <input class='btn btn-danger' name='delete' value='Delete' type='submit'/>    
                     </form>
                 </p>
             </div>
         </div>";
     }
     echo $html;
-
-
-    /*
-    if(isset($_POST['formDelete'])){
-        if(isset($_POST['quoteid']) && !empty($_POST['quoteid'])){
-            
-            $quoteid = $_POST['quoteid'];
-            echo "DELETE FROM quotes WHERE quoteid =".$quoteid;
-            $result = $conn->query("DELETE FROM quotes WHERE quoteid =".$quoteid);
-        }
-    }*/
 ?>
 
+<?php
+    if(isset($_POST['delete'])){
+        
+        if(isset($_POST['messageid'])){
+            $message_id = $_POST['messageid'];
+            $file_db->exec(" DELETE FROM messages WHERE id=$message_id; ");
+            header('Location: '.$_SERVER['REQUEST_URI']);
+            die();
+        }
+    }
+?>
 
     </body>
 </html>

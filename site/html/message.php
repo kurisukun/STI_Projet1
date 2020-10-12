@@ -23,7 +23,7 @@ include("redirect.php");
             <input type="text" class="form-control" name="title" id="title"/>
         </div>
         <div class="form-group col-md-6">
-            <label for="title">Contact</label>
+            <label for="contact">Contact</label>
             <input type="text" class="form-control" name="contact" id="contact"/>
         </div>
     </div>
