@@ -1,7 +1,7 @@
 <?php
 ob_start();
 session_start();
-include("header.html");
+include("header.php");
 include("redirect.php");
 ?>
 
@@ -72,7 +72,6 @@ include("redirect.php");
 
 <?php
     if(isset($_POST['delete'])){
-        
         if(isset($_POST['messageid'])){
             $message_id = $_POST['messageid'];
             $file_db->exec(" DELETE FROM messages WHERE id=$message_id; ");

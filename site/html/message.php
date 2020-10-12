@@ -1,7 +1,7 @@
 <?php
 ob_start();
 session_start();
-include("header.html");
+include("header.php");
 include("redirect.php");
 ?>
 

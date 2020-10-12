@@ -65,7 +65,7 @@ DB::initialize();
 </head>
 
 <body>
-<?php include("header.html") ?>
+<?php include("header.php") ?>
 
 <h2>Enter Username and Password</h2>
 <div class="container form-signin">
