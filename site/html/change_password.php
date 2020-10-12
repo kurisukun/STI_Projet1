@@ -1,7 +1,6 @@
 <?php
 ob_start();
 session_start();
-include("DB.php")
 ?>
 <html>
 <head>

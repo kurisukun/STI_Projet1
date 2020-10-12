@@ -1,8 +1,6 @@
 <?php
 ob_start();
 session_start();
-include("DB.php");
-DB::initialize();
 ?>
 
 <html lang="fr">
