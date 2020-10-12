@@ -112,7 +112,7 @@ if (isset($_POST['search']) && !empty($_POST['username-search'])) {
     if (isset($_POST['Modifiy'])){
         $username = $_POST['username-modifier'];
         $role=$_POST['role-modifier'];
-        $password=$var = password_hash($_POST['password-modifier'],   PASSWORD_BCRYPT) ;;
+        $password=$var = password_hash($_POST['password-modifier'],   PASSWORD_BCRYPT) ;
         $validity=$_POST['validity-modifier'];
         if(!empty($_POST['role-modifier'])){
             $query=$file_db->query("UPDATE collaborators SET admin='$role' WHERE `login`='$username';");
