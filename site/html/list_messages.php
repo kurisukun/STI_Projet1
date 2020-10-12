@@ -6,7 +6,6 @@ include("redirect.php");
 ?>
 
 // TODO Bouton pour répondre
-// TODO Supprimer le message
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,15 +25,14 @@ include("redirect.php");
     $user_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$user';")->fetch();
     $user_id = $user_query['id'];
 
-    $messages_query = $file_db->query(" SELECT * FROM messages WHERE `idExpediteur`=$user_id");
-    
+    $messages_query = $file_db->query(" SELECT * FROM 'messages' WHERE idDestinataire = {$user_id} ORDER BY time_value DESC;");
 
     $html = "";
     $i = 0;
     while($row = $messages_query->fetch(PDO::FETCH_ASSOC)){
         $i += 1;
-        $receiver_query = $file_db->query(" SELECT login FROM collaborators WHERE `id` = '{$row['idDestinataire']}'; ")->fetch();
-        $receiver = $receiver_query['login'];
+        $sender_query = $file_db->query(" SELECT login FROM collaborators WHERE `id` = '{$row['idExpediteur']}'; ")->fetch();
+        $sender = $sender_query['login'];
 
         $html .= 
         "<div class='card m-5 w-75'>
@@ -46,7 +44,7 @@ include("redirect.php");
                         <button class='btn btn-sm btn-dark' data-toggle='collapse' data-target='#collapse{$i}' type='button' aria-expanded='false' aria-controls='collapse{$i}'> Details </button>
                         </h4> 
                     </div>
-                    <div class='text-muted'> <h6>From : {$receiver} </h6> </div>
+                    <div class='text-muted'> <h6>From : {$sender} </h6> </div>
                     <div> {$row['time_value']} </div>
                 </p>
             </div>

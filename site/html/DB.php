@@ -38,7 +38,7 @@ class DB{
                             id INTEGER PRIMARY KEY, 
                             title TEXT, 
                             content TEXT, 
-                            time_value TEXT,
+                            time_value DATETIME,
                             idExpediteur INTEGER,
                             idDestinataire INTEGER)");
 
