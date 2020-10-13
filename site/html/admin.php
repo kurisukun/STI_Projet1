@@ -1,7 +1,6 @@
 <?php
 ob_start();
 session_start();
-include("DB.php")
 ?>
 <html>
 <head>
@@ -21,14 +20,10 @@ include('redirect.php');
         !empty($_POST['password'])) {
 
         $username = $_POST['username'];
-        $row = array('count' => 1);
+        $row = '';
         try{
-            $query=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'");
-            $row = $query->fetch();
-        } catch (Exception $e) {
-            // Print PDOException message
-            echo $e->getMessage();
-        }
+            $row=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
+        } catch (Exception $e) {}
 
         if ($row['count'] == 0) {
             $var = password_hash($_POST['password'],   PASSWORD_BCRYPT) ;
@@ -54,10 +49,7 @@ include('redirect.php');
 
             try{
                 $file_db->exec($request_begin . $request_values);
-            } catch (PDOException $e) {
-                // Print PDOException message
-                echo $e->getMessage();
-            }
+            } catch (PDOException $e) {}
         } else {
             echo "<br/>";
             echo 'Username already taken';
@@ -91,12 +83,8 @@ if (isset($_POST['search']) && !empty($_POST['username-search'])) {
     $username = $_POST['username-search'];
     $row = array('count' => 1);
     try{
-        $query=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'");
-        $row = $query->fetch();
-    } catch (Exception $e) {
-        // Print PDOException message
-        echo $e->getMessage();
-    }
+        $row=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
+    } catch (Exception $e) {}
 
     if ($row['count'] == 1) {
         echo "<br/>";
@@ -114,17 +102,19 @@ if (isset($_POST['search']) && !empty($_POST['username-search'])) {
         $role=$_POST['role-modifier'];
         $password=$var = password_hash($_POST['password-modifier'],   PASSWORD_BCRYPT) ;
         $validity=$_POST['validity-modifier'];
-        if(!empty($_POST['role-modifier'])){
-            $query=$file_db->query("UPDATE collaborators SET admin='$role' WHERE `login`='$username';");
-        }
+        try{
+            if(!empty($_POST['role-modifier'])){
+                $query=$file_db->query("UPDATE collaborators SET admin='$role' WHERE `login`='$username';");
+            }
 
-        if(!empty($_POST['password-modifier'])){
-            $query=$file_db->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
-        }
+            if(!empty($_POST['password-modifier'])){
+                $query=$file_db->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
+            }
 
-        if(!empty($_POST['validity-modifier'])){
-            $query=$file_db->query("UPDATE collaborators SET validity='$validity' WHERE `login`='$username';");
-        }
+            if(!empty($_POST['validity-modifier'])){
+                $query=$file_db->query("UPDATE collaborators SET validity='$validity' WHERE `login`='$username';");
+            }
+        }catch (Exception $e) {}
     }
 ?>
 <form class="form-signin" role="form"

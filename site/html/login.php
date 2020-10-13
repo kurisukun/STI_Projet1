@@ -86,22 +86,19 @@ session_start();
     //$result = $file_db->query('SELECT * FROM collaborators');
     if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['password'])) {
         $username = $_POST['username'];
-        $password = $_POST['password'];
-        $row = array('count' => 1);
-        $query = array(1 => 2);
+
         try{
-            $query=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'");
-            $row = $query->fetch();
-            $query_password=$file_db->query("SELECT password,validity FROM collaborators WHERE `login`='$username'");
-            $password_db = $query_password->fetch();
-        } catch (Exception $e) {
-            // Print PDOException message
-            echo $e->getMessage();
-        }
+            $row=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
+            $password_db=$file_db->query("SELECT password,validity FROM collaborators WHERE `login`='$username'")->fetch();
+        } catch (Exception $e) {}
+
         $count=$row['count'];
-        if ($count > 0 && password_verify($password, $password_db['password']) && $password_db['validity'] > 0) {
-            $query=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username'");
-            $row = $query->fetch();
+        if ($count > 0 && password_verify($_POST['password'], $password_db['password']) && $password_db['validity'] > 0) {
+            $row = '';
+            try{
+                $row=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username'")->fetch();
+            }catch (Exception $e) {}
+
             $_SESSION['username'] = $username;
             if($row['admin'] == 1){
                 $_SESSION['admin'] = $row['admin'];

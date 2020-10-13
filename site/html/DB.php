@@ -97,20 +97,6 @@ try {
                         '{$m['idExpediteur']}',
                         '{$m['idDestinataire']}')");
     }
-
-    /**************************************
-     * Drop tables                         *
-     **************************************/
-
-    // Drop table messages from file db
-    //$file_db->exec("DROP TABLE collaborators");
-
-    /**************************************
-     * Close db connections                *
-     **************************************/
-
-    // Close file db connection
-    //$file_db = null;
 } catch (PDOException $e) {
 }
 header('Refresh: 0; URL = login.php');

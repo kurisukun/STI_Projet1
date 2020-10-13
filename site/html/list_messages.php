@@ -3,6 +3,8 @@ ob_start();
 session_start();
 include("header.php");
 include("redirect.php");
+unset($_SESSION['retitle']);
+unset($_SESSION['receiver']);
 ?>
 
 
@@ -14,6 +16,8 @@ include("redirect.php");
         <title>Reception box</title>
     </head>
     <body>
+    <div class="container">
+        <a class="btn btn-secondary btn-lg mt-5" type="button" href="message.php">+ New message</a>
 
 
 <?php
@@ -58,8 +62,8 @@ include("redirect.php");
             <div class='card-footer text-center'>
                 <p>
                     <form action='' method='post'>
-                        <input  id='messageid' name='messageid' value='{$row['id']}'/>
-                        <input  id='messagetitle' name='messagetitle' value='{$row['title']}'/>
+                        <input style='display:none;' id='messageid' name='messageid' value='{$row['id']}'/>
+                        <input style='display:none;' id='messagetitle' name='messagetitle' value='{$row['title']}'/>
                         <input class='btn btn-dark' name='answer' value='Answer' type='submit'/>    
                         <input class='btn btn-danger' name='delete' value='Delete' type='submit'/>    
                     </form>
@@ -91,5 +95,6 @@ include("redirect.php");
     }
 ?>
 
+    </div>
     </body>
 </html>

@@ -22,13 +22,10 @@ session_start();
         if(password_verify($_POST['password-modifier_repeat'], $password)){
             try{
                 $query=$file_db->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
-            }catch (Exception $e){
-                echo 'Oups! something went  wrong';
-            }
+            }catch (Exception $e){}
         }else{
             echo "The two Password are different";
         }
-
     }
 ?>
 <h2>Change Password</h2>
