@@ -5,18 +5,19 @@ include("header.php");
 include("redirect.php");
 ?>
 
-// TODO Bouton pour répondre
+
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Message</title>
+        <title>Reception box</title>
     </head>
     <body>
 
 
 <?php
+    
     $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
     // Set errormode to exceptions
     $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -57,7 +58,8 @@ include("redirect.php");
             <div class='card-footer text-center'>
                 <p>
                     <form action='' method='post'>
-                        <input id='messageid' name='messageid' value='{$row['id']}'/>
+                        <input  id='messageid' name='messageid' value='{$row['id']}'/>
+                        <input  id='messagetitle' name='messagetitle' value='{$row['title']}'/>
                         <input class='btn btn-dark' name='answer' value='Answer' type='submit'/>    
                         <input class='btn btn-danger' name='delete' value='Delete' type='submit'/>    
                     </form>
@@ -74,6 +76,16 @@ include("redirect.php");
             $message_id = $_POST['messageid'];
             $file_db->exec(" DELETE FROM messages WHERE id=$message_id; ");
             header('Location: '.$_SERVER['REQUEST_URI']);
+            die();
+        }
+    }
+    else if(isset($_POST['answer'])){
+        echo "YOYOYO!!!";
+        if(isset($_POST['messageid']) && isset($_POST['messagetitle'])){
+            echo "HELLO!!!";
+            $_SESSION['receiver'] = $sender;
+            $_SESSION['retitle'] = 'Re:' . $_POST['messagetitle'];
+            header('Location: message.php');
             die();
         }
     }

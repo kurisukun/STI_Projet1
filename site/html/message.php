@@ -20,11 +20,11 @@ include("redirect.php");
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="title">Title</label>
-            <input type="text" class="form-control" name="title" id="title"/>
+            <input type="text" class="form-control" name="title" id="title" value="<?php if(isset($_SESSION['retitle'])) echo $_SESSION['retitle']?>"/>
         </div>
         <div class="form-group col-md-6">
             <label for="contact">Contact</label>
-            <input type="text" class="form-control" name="contact" id="contact"/>
+            <input type="text" class="form-control" name="contact" id="contact" value="<?php if(isset($_SESSION['receiver'])) echo $_SESSION['receiver']?>"/>
         </div>
     </div>
     <div class="form-group row">
