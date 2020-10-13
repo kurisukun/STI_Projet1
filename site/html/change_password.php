@@ -13,7 +13,7 @@ session_start();
     // Set errormode to exceptions
     $file_db->setAttribute(PDO::ATTR_ERRMODE,
         PDO::ERRMODE_EXCEPTION);
-    include("header.html");
+    include("header.php");
     include('redirect.php');
     if (isset($_POST['Modifiy']) && !empty($_POST['password-modifier']) && !empty($_POST['password-modifier_repeat'])){
         $password = password_hash($_POST['password-modifier'],   PASSWORD_BCRYPT) ;

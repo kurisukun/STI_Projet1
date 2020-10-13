@@ -1,5 +1,5 @@
 <?php
-include("header.html");
+include("header.php");
 include('redirect.php');
 session_start();
 unset($_SESSION["username"]);

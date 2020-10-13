@@ -9,7 +9,7 @@ include("DB.php")
 </head>
 <body>
 <?php
-include("header.html");
+include("header.php");
 include('redirect.php');
     // Create (connect to) SQLite database in file
     $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');

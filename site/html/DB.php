@@ -29,16 +29,16 @@ try {
                     password TEXT NOT NULL ,
                     validity INTEGER DEFAULT 0)");
 
-    // Drop table messages from file db
-    $file_db->exec("DROP TABLE IF EXISTS messages");
-    // Create table messages
-    $file_db->exec("CREATE TABLE IF NOT EXISTS messages (
-                    id INTEGER PRIMARY KEY, 
-                    title TEXT, 
-                    content TEXT, 
-                    time_value TEXT,
-                    idExpediteur INTEGER,
-                    idDestinataire INTEGER)");
+            // Drop table messages from file db
+            $file_db->exec("DROP TABLE IF EXISTS messages");
+            // Create table messages
+            $file_db->exec("CREATE TABLE IF NOT EXISTS messages (
+                            id INTEGER PRIMARY KEY, 
+                            title TEXT, 
+                            content TEXT, 
+                            time_value DATETIME,
+                            idExpediteur INTEGER,
+                            idDestinataire INTEGER)");
 
     /**************************************
      * Set initial data                    *
@@ -112,8 +112,6 @@ try {
     // Close file db connection
     //$file_db = null;
 } catch (PDOException $e) {
-    // Print PDOException message
-    echo $e->getMessage();
 }
 header('Refresh: 0; URL = login.php');
 ?>
