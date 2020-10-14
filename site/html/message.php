@@ -54,20 +54,19 @@ if (!empty($_POST['title']) && !empty($_POST['contact'])){
     $time = date('Y-m-d H:i:s');
     $sender = $_SESSION['username'];
     $sender_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$sender';")->fetch();
-    //$sender_id = $file_db->exec(" SELECT id FROM collaborators WHERE `login` = '$sender';");
     $sender_id = $sender_query['id'];
+    
     $receiver = $_POST['contact'];
     $receiver_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$receiver'")->fetch();
-    //$receiver_id = $file_db->exec(" SELECT id FROM collaborators WHERE `login` = '$receiver';");
     $receiver_id = $receiver_query['id'];
-    $file_db->exec(" INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES ('$title', '$message', '$time', '$sender_id', '$receiver_id');");
-    
-    echo "Insertion of message in DB done: ";
-    echo "$title";
-    echo "$message";
-    echo "$time";
-    echo "$sender_id";
-    echo "$receiver_id";
+    if(empty($receiver_id)){
+        echo "User does not exist!";
+    }
+    else{
+        $file_db->exec(" INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES ('$title', '$message', '$time', '$sender_id', '$receiver_id');");
+    }
+
+
 }
     
 
