@@ -79,6 +79,6 @@
         <a href="/list_messages.php">Message</a>
         <a href="/login.php">Login</a>
         <a href="/logout.php">Logout</a>
-        <a href="/change_password.php">change Cred</a>
+        <a href="/change_password.php">Change password</a>
     </div>
 </div>

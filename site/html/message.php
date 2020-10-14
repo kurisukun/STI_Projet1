@@ -19,9 +19,10 @@ include("redirect.php");
 
 <div class="container">
 
+
 <?php
 
-if (!empty($_POST['title']) && !empty($_POST['contact'])){
+if (isset($_POST['Envoyer']) /*&& !empty($_POST['title']) && !empty($_POST['contact'])*/){
     // Create (connect to) SQLite database in file
     $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
     // Set errormode to exceptions
@@ -34,6 +35,13 @@ if (!empty($_POST['title']) && !empty($_POST['contact'])){
     $sender_id = $sender_query['id'];
     
     $receiver = $_POST['contact'];
+    if(empty($receiver) || empty($title)){
+        echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
+                    <div class='alert alert-danger'> The title and contact fields must be filled in </div>
+                </div>";
+    }
+    else{
+
     $receiver_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$receiver'")->fetch();
     $receiver_id = $receiver_query['id'];
     if(empty($receiver_id)){
@@ -45,16 +53,17 @@ if (!empty($_POST['title']) && !empty($_POST['contact'])){
         $file_db->exec(" INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES ('$title', '$message', '$time', '$sender_id', '$receiver_id');");
     }
 }
+}
+
+/*
 else{
     echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
                 <div class='alert alert-danger'> The title and contact fields must be filled in </div>
             </div>";
-}
+}*/
 
     unset($pdo);
 ?>
-
-
 
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
 
@@ -73,11 +82,14 @@ else{
         <textarea class="form-control" name="message" id="message"></textarea>
     </div>
     <div>
-        <input type="submit" class="form-control" value="Envoyer" />
+        <input type="submit" class="form-control" type="Envoyer" name="Envoyer" />
     </div>
 
 
 </form>
+
+
+
 </div>
 
 
