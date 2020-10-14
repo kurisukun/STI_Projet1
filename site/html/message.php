@@ -14,33 +14,10 @@ include("redirect.php");
 </head>
 <body>
 
+
+
+
 <div class="container">
-<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
-
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="title">Title</label>
-            <input type="text" class="form-control" name="title" id="title" value="<?php if(isset($_SESSION['retitle'])) echo $_SESSION['retitle']?>"/>
-        </div>
-        <div class="form-group col-md-6">
-            <label for="contact">Contact</label>
-            <input type="text" class="form-control" name="contact" id="contact" value="<?php if(isset($_SESSION['receiver'])) echo $_SESSION['receiver']?>"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="message">Message</label>
-        <textarea class="form-control" name="message" id="message"></textarea>
-    </div>
-    <div>
-        <input type="submit" class="form-control" value="Envoyer" />
-    </div>
-</form>
-</div>
-
-
-</body>
-</html>
-
 
 <?php
 
@@ -60,16 +37,49 @@ if (!empty($_POST['title']) && !empty($_POST['contact'])){
     $receiver_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$receiver'")->fetch();
     $receiver_id = $receiver_query['id'];
     if(empty($receiver_id)){
-        echo "User does not exist!";
-    }
+        echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
+                    <div class='alert alert-danger'> {$receiver} user does not exist! </div>
+                </div>";
+    }           
     else{
         $file_db->exec(" INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES ('$title', '$message', '$time', '$sender_id', '$receiver_id');");
     }
-
-
 }
-    
-
+else{
+    echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
+                <div class='alert alert-danger'> The title and contact fields must be filled in </div>
+            </div>";
+}
 
     unset($pdo);
 ?>
+
+
+
+<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" name="title" id="title" value="<?php if(isset($_SESSION['retitle'])) echo $_SESSION['retitle']?>"/>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="contact">Contact</label>
+            <input type="text" class="form-control" name="contact" id="contact" value="<?php if(isset($_SESSION['receiver'])) echo $_SESSION['receiver']?>"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="message">Message</label>
+        <textarea class="form-control" name="message" id="message"></textarea>
+    </div>
+    <div>
+        <input type="submit" class="form-control" value="Envoyer" />
+    </div>
+
+
+</form>
+</div>
+
+
+</body>
+</html>
