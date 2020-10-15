@@ -42,25 +42,19 @@ if (isset($_POST['Envoyer']) /*&& !empty($_POST['title']) && !empty($_POST['cont
     }
     else{
 
-    $receiver_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$receiver'")->fetch();
-    $receiver_id = $receiver_query['id'];
-    if(empty($receiver_id)){
-        echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
-                    <div class='alert alert-danger'> {$receiver} user does not exist! </div>
-                </div>";
-    }           
-    else{
-        $file_db->exec(" INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES ('$title', '$message', '$time', '$sender_id', '$receiver_id');");
+        $receiver_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$receiver'")->fetch();
+        $receiver_id = $receiver_query['id'];
+        if(empty($receiver_id)){
+            echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
+                        <div class='alert alert-danger'> {$receiver} user does not exist! </div>
+                    </div>";
+        }           
+        else{
+            $file_db->exec(" INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES ('$title', '$message', '$time', '$sender_id', '$receiver_id');");
+        }
     }
 }
-}
 
-/*
-else{
-    echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
-                <div class='alert alert-danger'> The title and contact fields must be filled in </div>
-            </div>";
-}*/
 
     unset($pdo);
 ?>

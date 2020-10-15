@@ -77,7 +77,13 @@
         ?>
         <a href="/phpliteadmin.php">DbManagement</a>
         <a href="/list_messages.php">Message</a>
-        <a href="/login.php">Login</a>
+        
+        <!-- <a href="/login.php">Login</a> -->
+        <?php
+            if(!isset($_SESSION['username']))
+                echo "<a href='/login.php'>Login</a>" 
+        ?>
+
         <a href="/logout.php">Logout</a>
         <a href="/change_password.php">Change password</a>
     </div>
