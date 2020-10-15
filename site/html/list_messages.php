@@ -84,9 +84,7 @@ unset($_SESSION['receiver']);
         }
     }
     else if(isset($_POST['answer'])){
-        echo "YOYOYO!!!";
         if(isset($_POST['messageid']) && isset($_POST['messagetitle'])){
-            echo "HELLO!!!";
             $_SESSION['receiver'] = $sender;
             $_SESSION['retitle'] = 'Re:' . $_POST['messagetitle'];
             header('Location: message.php');

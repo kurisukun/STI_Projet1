@@ -56,28 +56,66 @@ include('redirect.php');
         }
     }
 ?>
-<h2>Add a new user</h2>
-<form class="form-signin" role="form"
-      action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
-      ?>" method="post">
-    <input type="number" class="form-control"
-           name="role" placeholder="Role" >
-    <input type="text" class="form-control"
-           name="username" placeholder="Username" required>
-    <input type="password" class="form-control"
-           name="password" placeholder="Password" required>
-    <input type="number" class="form-control"
-           name="validity" placeholder="Validity" >
-    <button class="btn" type="submit" name="submit">Submit</button>
+<div class="container">
+<div class="card m-3">
+    <div class="card-body">
+        <h3 class="card-title"> Add new user</h3>
+        <form class="form-signin" role="form"
+        action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+        ?>" method="post">
+    <!--<input type="number" class="form-control"
+           name="role" placeholder="Role" -->
+        <div class="form-group">
+            <label for="role"> Role </label>
+            <select class="custom-select"  name="role">
+                <option value="0" selected>Collaborator</option>
+                <option value="1">Admin</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="username"> Username </label>
+            <input type="text" class="form-control"
+            name="username" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+            <label for="password"> Password </label>
+            <input type="password" class="form-control"
+            name="password" placeholder="Password" required>
+        </div>
+        <div class="form-group">
+            <label for="validity"> Validity </label>
+    <!--<input type="number" class="form-control"
+           name="validity" placeholder="Validity" >-->
+            <select class="custom-select"  name="role">
+                <option value="0">Not activ</option>
+                <option value="1" selected>Activ</option>
+            </select>
+        </div>
+        <button class="btn" type="submit" name="submit">Submit</button>
+    </div>
+
 </form>
-<h2>Search an User</h2>
-<form class="form-signin" role="form"
-      action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
-      ?>" method="post">
-    <input type="text" class="form-control"
-           name="username-search" placeholder="Username" required>
-   <button class="btn" type="search" name="search">Search</button>
-</form>
+</div>
+
+
+<div class="container">
+<div class="card m-3">
+    <div class="card-body">
+
+        <h3 class="card-title">Search an User</h3>
+            <form class="form-signin" role="form"
+            action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+            ?>" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control"
+                    name="username-search" placeholder="Username" required>
+                </div>
+                <button class="btn" type="search" name="search">Search</button>
+            </form>
+    </div>
+            
+            
+        
 <?php
 if (isset($_POST['search']) && !empty($_POST['username-search'])) {
     $username = $_POST['username-search'];
@@ -95,6 +133,8 @@ if (isset($_POST['search']) && !empty($_POST['username-search'])) {
     }
 }
 ?>
+
+</div>
 <h2>Modify a user</h2>
 <?php
     if (isset($_POST['Modifiy'])){
@@ -130,5 +170,7 @@ if (isset($_POST['search']) && !empty($_POST['username-search'])) {
            name="validity-modifier" placeholder="Validity">
     <button class="btn" type="Modifiy" name="Modifiy">Modifiy</button>
 </form>
+
+
 </body>
 </html>
