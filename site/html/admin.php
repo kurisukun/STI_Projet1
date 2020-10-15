@@ -130,5 +130,23 @@ if (isset($_POST['search']) && !empty($_POST['username-search'])) {
            name="validity-modifier" placeholder="Validity">
     <button class="btn" type="Modifiy" name="Modifiy">Modifiy</button>
 </form>
+
+<h2>Delete an User</h2>
+<form class="form-signin" role="form"
+      action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
+      ?>" method="post">
+    <input type="text" class="form-control"
+           name="username-delete" placeholder="Username" required>
+    <button class="btn" type="Delete" name="search">Delete</button>
+</form>
+<?php
+if (isset($_POST['Delete']) && !empty($_POST['username-delete'])) {
+    $username = $_POST['username-search'];
+    $row = array('count' => 1);
+    try{
+        $row=$file_db->query("DELETE FROM collaborators WHERE `login`='$username'")->fetch();
+    } catch (Exception $e) {}
+}
+?>
 </body>
 </html>
