@@ -17,6 +17,30 @@
 <div class="container">
 
 
+<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" name="title" id="title" value="<?php if(isset($_SESSION['retitle'])) echo $_SESSION['retitle']?>"/>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="contact">Contact</label>
+            <input type="text" class="form-control" name="contact" id="contact" value="<?php if(isset($_SESSION['receiver'])) echo $_SESSION['receiver']?>"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="message">Message</label>
+        <textarea class="form-control" name="message" id="message"></textarea>
+    </div>
+    <div>
+        <input type="submit" class="form-control" type="Envoyer" name="Envoyer" />
+    </div>
+
+
+</form>
+
+
 <?php
 
 if (isset($_POST['Envoyer']) /*&& !empty($_POST['title']) && !empty($_POST['contact'])*/){
@@ -53,31 +77,8 @@ if (isset($_POST['Envoyer']) /*&& !empty($_POST['title']) && !empty($_POST['cont
 }
 
 
-    unset($pdo);
+    //unset($pdo);
 ?>
-
-<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
-
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="title">Title</label>
-            <input type="text" class="form-control" name="title" id="title" value="<?php if(isset($_SESSION['retitle'])) echo $_SESSION['retitle']?>"/>
-        </div>
-        <div class="form-group col-md-6">
-            <label for="contact">Contact</label>
-            <input type="text" class="form-control" name="contact" id="contact" value="<?php if(isset($_SESSION['receiver'])) echo $_SESSION['receiver']?>"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="message">Message</label>
-        <textarea class="form-control" name="message" id="message"></textarea>
-    </div>
-    <div>
-        <input type="submit" class="form-control" type="Envoyer" name="Envoyer" />
-    </div>
-
-
-</form>
 
 
 

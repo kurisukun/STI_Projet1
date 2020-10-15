@@ -65,11 +65,12 @@
         }
     }
 </style>
-</head>
+
 <body>
 
 <div class="header">
-    <a href="/" class="logo">AnApp</a>
+    
+    <a href="<?php if(isset($_SESSION)) {echo "/list_messages.php";} else{echo "#";}?>" class="logo">AnApp</a>
     <div class="header-right">
         <?php
             if(isset($_SESSION['admin']))
