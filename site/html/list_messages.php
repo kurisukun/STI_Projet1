@@ -1,13 +1,11 @@
 <?php
-ob_start();
-session_start();
-include("header.php");
-include("redirect.php");
-unset($_SESSION['retitle']);
-unset($_SESSION['receiver']);
+    ob_start();
+    session_start();
+    include("header.php");
+    include("redirect.php");
+    unset($_SESSION['retitle']);
+    unset($_SESSION['receiver']);
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +16,6 @@ unset($_SESSION['receiver']);
     <body>
     <div class="container">
         <a class="btn btn-secondary btn-lg mt-5" type="button" href="message.php">+ New message</a>
-
 
 <?php
     

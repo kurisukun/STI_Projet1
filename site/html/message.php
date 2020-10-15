@@ -1,8 +1,8 @@
 <?php
-ob_start();
-session_start();
-include("header.php");
-include("redirect.php");
+    ob_start();
+    session_start();
+    include("header.php");
+    include("redirect.php");
 ?>
 
 
@@ -13,9 +13,6 @@ include("redirect.php");
 <title>Message</title>
 </head>
 <body>
-
-
-
 
 <div class="container">
 

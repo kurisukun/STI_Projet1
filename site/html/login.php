@@ -63,11 +63,11 @@ session_start();
 </head>
 
 <body>
-<?php include("header.php") ?>
 
 <h2>Enter Username and Password</h2>
 <div class="container form-signin">
     <?php
+    include("header.php");
 
     // Set default timezone
     date_default_timezone_set('UTC');
@@ -103,7 +103,7 @@ session_start();
             if($row['admin'] == 1){
                 $_SESSION['admin'] = $row['admin'];
             }
-            echo 'You have entered valid use name and password';
+
             header('Location: list_messages.php');
         } else {
             echo "<br/>";
