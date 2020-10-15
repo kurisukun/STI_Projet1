@@ -1,5 +1,9 @@
 ## Guide d'utilisation
 
+**Auteurs:** Arn Jérôme, Barros Henriques Chris
+
+
+
 
 
 ### Page de login
@@ -79,3 +83,35 @@ Cette page sert simplement à modifier notre mot de passe utilisateur.
 ![image-20201015010302694](img/image-20201015010302694.png)
 
 Si on entre deux mots de passe différents, un message d'erreur apparaît.
+
+
+
+### Onglet "Admin"
+
+Cette partie n'est accessible que si un utilisateur a le rôle d'admin. Lorsque l'on arrive sur la page, on a différentes section:
+
+
+
+La list de tous les utlisateurs présents dans la base de données:
+
+![image-20201015215628003](img/image-20201015215628003.png)
+
+
+
+Un formulaire pour ajouter un nouveau collaborateur en choisissant son rôle, son nom d'utilisateur, son mot de passe, ainsi que si son compte est actif:
+
+![image-20201015215719077](img/image-20201015215719077.png)
+
+Si on entre un nom d'utilisateur déjà utilisé, un message d'erreur l'indiquant apparaît.
+
+
+
+Il est aussi possible de modifier les informations d'un utilisateur (sauf son nom):
+
+![image-20201015215923851](img/image-20201015215923851.png)
+
+
+
+Finalement, il est possible de supprimer un utilisateur:
+
+![image-20201015220129600](img/image-20201015220129600.png)
