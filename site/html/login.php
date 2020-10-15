@@ -104,13 +104,15 @@ session_start();
                 $_SESSION['admin'] = $row['admin'];
             }
             echo 'You have entered valid use name and password';
-            header('Refresh: 1; URL = login.php');
+            header('Location: list_messages.php');
         } else {
             echo "<br/>";
             echo 'Wrong username or password';
         }
     }
     ?>
+
+
 </div> <!-- /container -->
 
 <div class="container">
