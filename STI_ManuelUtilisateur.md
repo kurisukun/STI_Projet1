@@ -2,8 +2,14 @@
 
 **Auteurs:** Arn Jérôme, Barros Henriques Chris
 
+### Lancement de l'application. 
+1. Pour commencer, exécuter le script run.sh. ce dernier va lancer container docker et initialiser la base de donnée 
+2. ouvrez votre navigateur préféré et allez sur la page http://localhost:8080/login.php
 
-
+> utilisateurs existants:
+> - admin:passw0rd 
+> - prof:password
+> - assistant:password
 
 
 ### Page de login

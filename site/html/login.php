@@ -72,10 +72,10 @@ session_start();
           action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
           ?>" method="post">
         <input type="text" class="form-control"
-               name="username" placeholder="username = admin"
+               name="username" placeholder="username"
                required autofocus></br>
         <input type="password" class="form-control"
-               name="password" placeholder="password = passw0rd" required>
+               name="password" placeholder="password" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit"
                 name="login">Login
         </button>

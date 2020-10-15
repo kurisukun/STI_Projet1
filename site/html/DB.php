@@ -51,11 +51,11 @@ try {
             'password' => password_hash('passw0rd',   PASSWORD_BCRYPT),
             'validity' => 1),
         array('admin' => 0,
-            'login' => 'chris',
+            'login' => 'Prof',
             'password' => password_hash('password',   PASSWORD_BCRYPT),
             'validity' => 1),
         array('admin' => 0,
-            'login' => 'jerome',
+            'login' => 'Assistant',
             'password' => password_hash('password',   PASSWORD_BCRYPT),
             'validity' => 1),
     );
