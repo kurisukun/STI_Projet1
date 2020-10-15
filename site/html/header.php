@@ -74,12 +74,7 @@
         <?php
             if(isset($_SESSION['admin']))
                 echo '<a href="/admin.php">Admin</a>';
-        ?>
-        <a href="/phpliteadmin.php">DbManagement</a>
-        <!--<a href="/list_messages.php">Message</a>-->
-        
-        <!-- <a href="/login.php">Login</a> -->
-        <?php
+
             if(!isset($_SESSION['username'])){
                 echo "<a href='/login.php'>Login</a>";
             }
@@ -89,12 +84,5 @@
                 echo "<a href='/logout.php'>Logout</a>";
             }
         ?>
-        
-        <?php
-
-
-        ?>
-        <!--<a href="/logout.php">Logout</a>-->
-        <!-- <a href="/change_password.php">Change password</a> -->
     </div>
 </div>
