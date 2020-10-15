@@ -2,6 +2,26 @@
 
 
 
+### Page de login
+
+En lançant le Docker, on arrive sur cette page de login:
+
+![image-20201015200706670](img/image-20201015200706670.png)
+
+On ne peut accéder à aucune fonctionnalité tant que l'on n'est pas connecté. Si on entre des identifiants erronés, il va s'en dire que la connexion est refusée.
+
+Lorsque la connexion est faite, on arrive sur la page des messages, i.e. la boîte de réception. Si un utlisateur est un simple collaborateur, la barre de navigation du haut change et lui donne accès aux pages "Change password" et à un bouton de déconnexion.
+
+![image-20201015201218712](img/image-20201015201218712.png)
+
+
+
+Si celui-ci a le rôle d'admin, il obtient l'accès à la page "Admin".
+
+![image-20201015201631380](img/image-20201015201631380.png)
+
+
+
 
 
 ### Onglet Message
