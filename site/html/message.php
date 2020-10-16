@@ -45,29 +45,34 @@ if (isset($_POST['Envoyer']) /*&& !empty($_POST['title']) && !empty($_POST['cont
     $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
     // Set errormode to exceptions
     $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // On récupère toutes les informations inscrites dans le formulaire
     $title = $_POST["title"];
     $message = $_POST["message"];
     $time = date('Y-m-d H:i:s');
     $sender = $_SESSION['username'];
     $sender_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$sender';")->fetch();
     $sender_id = $sender_query['id'];
-    
     $receiver = $_POST['contact'];
+    
+    // Si le contact ou le titre du message n'est pas renseigné, on affiche une erreur
     if(empty($receiver) || empty($title)){
         echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
                     <div class='alert alert-danger'> The title and contact fields must be filled in </div>
                 </div>";
     }
     else{
-
         $receiver_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$receiver'")->fetch();
         $receiver_id = $receiver_query['id'];
+
+        //On vérifie bien que le contact adressé existe bien dans la base de données
         if(empty($receiver_id)){
             echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
                         <div class='alert alert-danger'> {$receiver} user does not exist! </div>
                     </div>";
         }           
         else{
+            // Envoi du message
             $file_db->exec(" INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES ('$title', '$message', '$time', '$sender_id', '$receiver_id');");
         }
     }

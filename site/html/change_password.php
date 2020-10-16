@@ -37,7 +37,7 @@ session_start();
     }
 ?>
 
-<!--  -->
+<!-- Form for changing password -->
 <div class="container">
     <h2>Change Password</h2>
     <form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">

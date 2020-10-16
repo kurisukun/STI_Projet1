@@ -15,6 +15,8 @@ include('redirect.php');
 $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
 // Set errormode to exceptions
 $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
 /**************************************
  * section listing des users          *
  **************************************/
@@ -53,7 +55,6 @@ $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         echo "</tr>";
                     }
                 ?>
-
                 </tbody>
             </table>
         </div>
