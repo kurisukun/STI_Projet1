@@ -1,4 +1,5 @@
 <?php
+// début de session
 ob_start();
 session_start();
 ?>
@@ -13,6 +14,7 @@ session_start();
     // Set errormode to exceptions
     $file_db->setAttribute(PDO::ATTR_ERRMODE,
         PDO::ERRMODE_EXCEPTION);
+// inclusion du layout de la page et de la redirection en cas de non connexion
     include("header.php");
     include('redirect.php');
     if (isset($_POST['Modifiy']) && !empty($_POST['password-modifier']) && !empty($_POST['password-modifier_repeat'])){

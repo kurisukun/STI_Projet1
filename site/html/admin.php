@@ -8,12 +8,16 @@ session_start();
 </head>
 <body>
 <?php
+// inclusion du layout de la page et de la redirection en cas de non connexion
 include("header.php");
 include('redirect.php');
 // Create (connect to) SQLite database in file
 $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
 // Set errormode to exceptions
 $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+/**************************************
+ * section listing des users          *
+ **************************************/
 ?>
 <div class="container">
     <div class="card m-3">
@@ -34,11 +38,13 @@ $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 <?php
                     $row;
                     try{
+                        // récupération des données dans la DB
                         $row=$file_db->query("SELECT id, login, admin, validity FROM collaborators")->fetchAll();
                     } 
                     catch (Exception $e) {}
              
                     foreach ($row as &$value){
+                        // affichage des données
                         echo "<tr>";
                         echo "<th scope='row'> {$value['id']}</th>";
                         echo "<td> {$value['login']} </td>";
@@ -54,6 +60,10 @@ $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     </div>
 </div>
 <?php
+/**************************************
+ * section ajout de user              *
+ **************************************/
+// fonctionne uniquement si le nom d'utilisateur et le mdp sont entré le reste sera mis par défaut
 if (isset($_POST['submit']) &&
     !empty($_POST['username']) &&
     !empty($_POST['password'])) {
@@ -64,11 +74,13 @@ if (isset($_POST['submit']) &&
         $row=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
     } catch (Exception $e) {}
 
+    // on check si l'utilisateur existe déjà
     if ($row['count'] == 0) {
         $var = password_hash($_POST['password'],   PASSWORD_BCRYPT) ;
         $request_begin = "INSERT INTO collaborators (";
         $request_values = ") VALUES (";
 
+        // si le role admin est set on ajoute les données correspondantes
         if(!empty($_POST['role'])){
             $request_begin = $request_begin . "admin,";
             $request_values = $request_values  . $_POST['role'] . ",";
@@ -77,6 +89,7 @@ if (isset($_POST['submit']) &&
         $request_begin = $request_begin . " login, password";
         $request_values = $request_values  . "'" . $_POST['username'] . "' ,'" . $var. "'";
 
+        // si l'utilisateur est valide on ajoute les données correspondantes
         if(!empty($_POST['validity'])){
             $request_begin = $request_begin . ", validity";
             $request_values = $request_values  . " ," . $_POST['validity'];
@@ -84,6 +97,7 @@ if (isset($_POST['submit']) &&
 
         $request_values = $request_values . ")";
         try{
+            // insertion dans la Db
             $file_db->exec($request_begin . $request_values);
         } catch (PDOException $e) {}
     }
@@ -130,12 +144,18 @@ if (isset($_POST['submit']) &&
             <h3 class="card-title"> Modify a user </h3>
     
     <?php
+    /**************************************
+     * section modification de user       *
+     **************************************/
+
         if (isset($_POST['Modifiy'])){
+            // préparation des attributs dans des variables locales
             $username = $_POST['username-modifier'];
             $role=$_POST['role-modifier'];
             $password=$var = password_hash($_POST['password-modifier'],   PASSWORD_BCRYPT) ;
             $validity=$_POST['validity-modifier'];
             try{
+                // pourchaque attributs on test s'il doit être changé et on fait une requête indépendante
                 if(!empty($_POST['role-modifier'])){
                     $query=$file_db->query("UPDATE collaborators SET admin='$role' WHERE `login`='$username';");
                 }
@@ -148,6 +168,7 @@ if (isset($_POST['submit']) &&
                     $query=$file_db->query("UPDATE collaborators SET validity='$validity' WHERE `login`='$username';");
                 }
             }catch (Exception $e) {
+                // affichage d'une erreur si une erreur survient
                 echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
                     <div class='alert alert-danger'>An error occured. Contact your magnificient administrator.</div>
                 </div>";
@@ -192,21 +213,19 @@ if (isset($_POST['submit']) &&
                 <button class="btn" type="Delete" name="Delete">Delete</button>
             </form>
             <?php
+            /**************************************
+             * section suppression de user        *
+             **************************************/
                 if (isset($_POST['Delete']) && !empty($_POST['username-delete'])) {
                     $username = $_POST['username-delete'];
                     try{
+                        // suppression de l'utilisateur dans la Db
                         $file_db->query("DELETE FROM collaborators WHERE `login`='$username'");
-                        header("Refresh: 0");
                     } catch (Exception $e) {}
                 }
             ?>
         </div>
     </div>
 </div>
-
-
-
-
-
 </body>
 </html>
