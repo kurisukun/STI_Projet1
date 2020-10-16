@@ -60,8 +60,9 @@ session_start();
 
             header('Location: list_messages.php');
         } else {
-            echo "<br/>";
-            echo 'Wrong username or password';
+            echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
+                    <div class='alert alert-danger'>Wrong username or password.</div>
+                </div>";
         }
     }
     ?>
