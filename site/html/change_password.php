@@ -17,16 +17,22 @@ session_start();
 // inclusion du layout de la page et de la redirection en cas de non connexion
     include("header.php");
     include('redirect.php');
+
     if (isset($_POST['Modifiy']) && !empty($_POST['password-modifier']) && !empty($_POST['password-modifier_repeat'])){
         $password = password_hash($_POST['password-modifier'],   PASSWORD_BCRYPT) ;
         $username = $_SESSION['username'];
 
+        // check si les deux md correspondent
         if(password_verify($_POST['password-modifier_repeat'], $password)){
             try{
+                // modification dans la db
                 $query=$file_db->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
             }catch (Exception $e){}
         }else{
-            echo "The two Password are different";
+            // affichage message d'erreur
+            echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
+                    <div class='alert alert-danger'>The two password are not the same.</div>
+                </div>";
         }
     }
 ?>
