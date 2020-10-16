@@ -79,9 +79,7 @@ try {
             'idDestinataire' => 2)
     );
 
-    /**************************************
-     * Play with databases and tables      *
-     **************************************/
+    // Insertion of collaborators and messages 
 
     foreach ($user as $m) {
         $file_db->exec("INSERT INTO collaborators (admin, login, password, validity)

@@ -73,12 +73,15 @@
     <a href="<?php if(isset($_SESSION)) {echo "/list_messages.php";} else{echo "#";}?>" class="logo">AnApp</a>
     <div class="header-right">
         <?php
+            // On affiche l'onglet Admin que si l'utilisateur connecté est bien admin
             if(isset($_SESSION['admin']))
                 echo '<a href="/admin.php">Admin</a>';
 
+            // Tant que l'utilisateur lambda n'est pas connecté, on laisse l'onglet pour la page de login
             if(!isset($_SESSION['username'])){
                 echo "<a href='/login.php'>Login</a>";
             }
+            // Sinon on affiche les autres onglets
             else{
                 echo "<a href='/list_messages.php'>Message</a>";
                 echo "<a href='/change_password.php'>Change password</a>";
