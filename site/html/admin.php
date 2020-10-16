@@ -101,6 +101,7 @@ if (isset($_POST['submit']) &&
             // insertion dans la Db
             $file_db->exec($request_begin . $request_values);
         } catch (PDOException $e) {}
+        header("Refresh: 0");
     }
 }
 ?>
@@ -174,6 +175,8 @@ if (isset($_POST['submit']) &&
                     <div class='alert alert-danger'>An error occured. Contact your magnificient administrator.</div>
                 </div>";
             }
+
+            header("Refresh:0");
         }
     ?>
 
@@ -223,6 +226,8 @@ if (isset($_POST['submit']) &&
                         // suppression de l'utilisateur dans la Db
                         $file_db->query("DELETE FROM collaborators WHERE `login`='$username'");
                     } catch (Exception $e) {}
+
+                    header("Refresh: 0");
                 }
             ?>
         </div>
