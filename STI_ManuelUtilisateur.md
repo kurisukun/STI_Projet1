@@ -93,18 +93,16 @@ Si on entre deux mots de passe différents, un message d'erreur apparaît.
 
 
 ### Onglet "Admin"
-
 Cette partie n'est accessible que si un utilisateur a le rôle d'admin. Lorsque l'on arrive sur la page, on a différentes section:
 
 
-
-La list de tous les utlisateurs présents dans la base de données:
+La list de tous les utlisateurs présents dans la base de données. C'est par ce biais qu'on peut vérifier qu'une insertion ou suppression d'un utilisateur a bien été exécutée. 
 
 ![image-20201015215628003](img/image-20201015215628003.png)
 
 
 
-Un formulaire pour ajouter un nouveau collaborateur en choisissant son rôle, son nom d'utilisateur, son mot de passe, ainsi que si son compte est actif:
+Un formulaire pour ajouter un nouveau collaborateur en choisissant son rôle, son nom d'utilisateur, son mot de passe, ainsi que si son compte est actif :
 
 ![image-20201015215719077](img/image-20201015215719077.png)
 
