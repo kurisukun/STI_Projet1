@@ -1,6 +1,5 @@
 <?php
-ob_start();
-session_start();
+require 'includes.php';
 ?>
 <html>
 <head>
