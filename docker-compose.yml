@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  php:
+    build:
+      context: .
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
+    volumes:
+      - ./site:/var/www:cached
+      -  ./docker/php.ini:/usr/local/etc/php/conf.d/zzz_custom.ini:cached
+  web:
+    image: nginx:latest
+    ports:
+      - 8080:80
+    volumes:
+      - ./site:/var/www:cached
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:cached
+      - ./logs/nginx:/var/log/nginx:delegated
+    depends_on:
+      - php

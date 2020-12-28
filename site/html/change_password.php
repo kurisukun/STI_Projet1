@@ -10,7 +10,7 @@ session_start();
 <body>
 <?php
     // Create (connect to) SQLite database in file
-    $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
+    $file_db = new PDO('sqlite:../databases/database.sqlite');
     // Set errormode to exceptions
     $file_db->setAttribute(PDO::ATTR_ERRMODE,
         PDO::ERRMODE_EXCEPTION);
