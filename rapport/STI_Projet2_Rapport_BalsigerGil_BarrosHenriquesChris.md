@@ -18,6 +18,25 @@ Le projet vise à trouver des menaces existantes sur le projet 1 et à le modifi
 
 
 
+#### DFD
+
+#### Identifier les biens
+
+On peut identifier deux biens distincts:
+
+- Base de données
+- Application
+
+Chacun représente un service qui communique l'un avec l'autre et ils possèdent un lot de vulnérabilités qui leur est propre. 
+
+
+
+#### Définition du périmètre de sécurisation
+
+Le but est de sécuriser l'application uniquement. On ne traitera pas les problèmes de vulnérabilité relatifs aux autres services, notamment la base de données (SQLite) ou nginx. 
+
+
+
 ## Sources de menace
 
 
