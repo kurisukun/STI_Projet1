@@ -1,5 +1,7 @@
 <?php
 
+use App\Database;
+
 require 'includes.php';
 
 // Set default timezone
@@ -11,19 +13,16 @@ date_default_timezone_set('UTC');
  **************************************/
 
 // Create (connect to) SQLite database in file
-$file_db = new PDO('sqlite:../databases/database.sqlite');
-// Set errormode to exceptions
-$file_db->setAttribute(PDO::ATTR_ERRMODE,
-    PDO::ERRMODE_EXCEPTION);
+$pdo = Database::getInstance()->getPdo();
 
 if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['password'])) {
     $username = $_POST['username'];
 
     try {
         // récupère l'utilisateur s'il existe dans la db
-        $row = $file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
+        $row = $pdo->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
         // récupère les données correspondantes
-        $password_db = $file_db->query("SELECT password,validity FROM collaborators WHERE `login`='$username'")->fetch();
+        $password_db = $pdo->query("SELECT password,validity FROM collaborators WHERE `login`='$username'")->fetch();
     } catch (Exception $e) {
         die($e->getMessage());
     }
@@ -34,7 +33,7 @@ if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['passw
         $row = '';
         try {
             // récuère les données pour set la session
-            $row = $file_db->query("SELECT * FROM collaborators WHERE `login`='$username'")->fetch();
+            $row = $pdo->query("SELECT * FROM collaborators WHERE `login`='$username'")->fetch();
         } catch (Exception $e) {
             die($e->getMessage());
         }
