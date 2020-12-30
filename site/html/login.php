@@ -15,7 +15,7 @@ date_default_timezone_set('UTC');
 // Create (connect to) SQLite database in file
 $pdo = Database::getInstance()->getPdo();
 
-if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['password'])) {
+if (!empty($_POST['username']) && !empty($_POST['password'])) {
     $username = $_POST['username'];
 
     try {
@@ -57,18 +57,25 @@ include 'parts/header.php';
 ?>
 
     <div class="container">
-        <h2>Enter Username and Password</h2>
-        <form role="form"
-              action="login.php" method="post">
-            <input type="text" class="form-control"
-                   name="username" placeholder="username"
-                   required autofocus></br>
-            <input type="password" class="form-control"
-                   name="password" placeholder="password" required>
-            <button class="btn btn-lg btn-primary btn-block" type="submit"
-                    name="login">Login
-            </button>
-        </form>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <h1>Login</h1>
+                <hr>
+                <p class="text-muted">Enter Username and Password</p>
+                <form role="form" action="login.php" method="post">
+                    <div class="mb-3">
+                        <input type="text" class="form-control"
+                               name="username" placeholder="Username"
+                               required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control"
+                               name="password" placeholder="Password" required>
+                    </div>
+                    <button class="btn btn-lg btn-primary d-block mx-auto" type="submit">Login</button>
+                </form>
+            </div>
+        </div>
     </div>
 
 <?php include 'parts/footer.php';
