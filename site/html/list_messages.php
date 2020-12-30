@@ -59,7 +59,7 @@ include 'parts/header.php';
 
         // Pour chaque message qui apparaît, on crée un bouton "Answer", "Delete" et surtout "Details"
         $html .=
-            "<div class='card m-5 w-75'>
+            "<div class='card my-4 mx-auto w-75'>
             <div class='card-header'>
                 <p>    
                     <div class='font-weight-bold'> 
