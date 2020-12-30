@@ -9,8 +9,10 @@ services:
     volumes:
       - ./site:/var/www:cached
       -  ./docker/php.ini:/usr/local/etc/php/conf.d/zzz_custom.ini:cached
+    depends_on:
+      - database
   web:
-    image: nginx:latest
+    image: nginx:1.19
     ports:
       - 8080:80
     volumes:
@@ -19,3 +21,25 @@ services:
       - ./logs/nginx:/var/log/nginx:delegated
     depends_on:
       - php
+  database:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sti
+      MYSQL_USER: sti
+      MYSQL_PASSWORD: sti
+    volumes:
+      -  db_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin:5
+    ports:
+      - 8100:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: database
+      PMA_USER: sti
+      PMA_PASSWORD: sti
+    depends_on:
+      - database
+volumes:
+  db_data:

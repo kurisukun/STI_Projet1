@@ -4,9 +4,9 @@ RUN apt-get update && apt-get install -y \
       wget \
       git
 
-RUN apt-get install -y unzip libzip-dev libicu-dev && docker-php-ext-install pdo zip intl opcache
+RUN apt-get install -y unzip libzip-dev libicu-dev && docker-php-ext-install pdo zip
 
-# PHP ext for MySQL / MariaDB
+# PHP ext for MySQL
 RUN docker-php-ext-install pdo_mysql
 
 # Xdebug

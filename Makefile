@@ -1,7 +1,7 @@
 user := $(shell id -u)
 group := $(shell id -g)
 dc := USER_ID=$(user) GROUP_ID=$(group) docker-compose
-de := docker-compose exec
+de := $(dc) exec
 
 .DEFAULT_GOAL := help
 .PHONY: help
@@ -29,4 +29,4 @@ stop: ## Stop les conteneurs
 
 .PHONY: clean
 clean: ## Stop et supprime les conteneurs
-	$(dc) down
+	$(dc) down -v --remove-orphans
