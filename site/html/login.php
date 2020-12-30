@@ -1,90 +1,75 @@
 <?php
-ob_start();
-session_start();
-?>
 
-<html lang="fr">
-<title>
-    Page de login
-</title>
+require 'includes.php';
 
-<head>
-    <title>Sti_project</title>
- 
-</head>
+// Set default timezone
+date_default_timezone_set('UTC');
 
-<?php  include("header.php");?>
+/**************************************
+ * Create databases and                *
+ * open connections                    *
+ **************************************/
 
-<h2>Enter Username and Password</h2>
-<div class="container form-signin">
-    <?php
+// Create (connect to) SQLite database in file
+$file_db = new PDO('sqlite:../databases/database.sqlite');
+// Set errormode to exceptions
+$file_db->setAttribute(PDO::ATTR_ERRMODE,
+    PDO::ERRMODE_EXCEPTION);
 
-    // Set default timezone
-    date_default_timezone_set('UTC');
+if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['password'])) {
+    $username = $_POST['username'];
 
-    /**************************************
-     * Create databases and                *
-     * open connections                    *
-     **************************************/
+    try {
+        // récupère l'utilisateur s'il existe dans la db
+        $row = $file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
+        // récupère les données correspondantes
+        $password_db = $file_db->query("SELECT password,validity FROM collaborators WHERE `login`='$username'")->fetch();
+    } catch (Exception $e) {
+        die($e->getMessage());
+    }
 
-    // Create (connect to) SQLite database in file
-    $file_db = new PDO('sqlite:../databases/database.sqlite');
-    // Set errormode to exceptions
-    $file_db->setAttribute(PDO::ATTR_ERRMODE,
-        PDO::ERRMODE_EXCEPTION);
+    $count = $row['count'];
+    // si l'utilisateur n'existe pas ou que les mdp ou qu'il est invalide sont pas correct on refuse la connexion
+    if ($count > 0 && password_verify($_POST['password'], $password_db['password']) && $password_db['validity'] > 0) {
+        $row = '';
+        try {
+            // récuère les données pour set la session
+            $row = $file_db->query("SELECT * FROM collaborators WHERE `login`='$username'")->fetch();
+        } catch (Exception $e) {
+            die($e->getMessage());
+        }
+        // set de la session standard
+        $_SESSION['username'] = $username;
+        // set de la session admin
+        if ($row['admin'] == 1) {
+            $_SESSION['admin'] = $row['admin'];
+        }
 
-    if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['password'])) {
-        $username = $_POST['username'];
-
-        try{
-            // récupère l'utilisateur s'il existe dans la db
-            $row=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
-            // récupère les données correspondantes
-            $password_db=$file_db->query("SELECT password,validity FROM collaborators WHERE `login`='$username'")->fetch();
-        } catch (Exception $e) {}
-
-        $count=$row['count'];
-        // si l'utilisateur n'existe pas ou que les mdp ou qu'il est invalide sont pas correct on refuse la connexion
-        if ($count > 0 && password_verify($_POST['password'], $password_db['password']) && $password_db['validity'] > 0) {
-            $row = '';
-            try{
-                // récuère les données pour set la session
-                $row=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username'")->fetch();
-            }catch (Exception $e) {}
-            // set de la session standard
-            $_SESSION['username'] = $username;
-            // set de la session admin
-            if($row['admin'] == 1){
-                $_SESSION['admin'] = $row['admin'];
-            }
-
-            header('Location: list_messages.php');
-        } else {
-            echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
+        header('Location: list_messages.php');
+        die();
+    } else {
+        echo "<div class='m-3 d-flex align-items-center justify-content-center'>
                     <div class='alert alert-danger'>Wrong username or password.</div>
                 </div>";
-        }
     }
-    ?>
+}
 
+include 'parts/header.php';
+?>
 
-</div> <!-- /container -->
+    <div class="container">
+        <h2>Enter Username and Password</h2>
+        <form role="form"
+              action="login.php" method="post">
+            <input type="text" class="form-control"
+                   name="username" placeholder="username"
+                   required autofocus></br>
+            <input type="password" class="form-control"
+                   name="password" placeholder="password" required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit"
+                    name="login">Login
+            </button>
+        </form>
+    </div>
 
-<div class="container">
-
-    <form class="form-signin" role="form"
-          action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
-          ?>" method="post">
-        <input type="text" class="form-control"
-               name="username" placeholder="username"
-               required autofocus></br>
-        <input type="password" class="form-control"
-               name="password" placeholder="password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit"
-                name="login">Login
-        </button>
-    </form>
-</div>
-
-</body>
-</html>
+<?php include 'parts/footer.php';
