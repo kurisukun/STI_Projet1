@@ -8,42 +8,30 @@ require 'includes.php';
 
 Auth::check();
 
-//On s'assure que les données mises dans une session précédente soient effacées
-unset($_SESSION['retitle']);
-unset($_SESSION['receiver']);
-
 $pdo = Database::getInstance()->getPdo();
 
 // Vérifie que le bouton delet a bien été pressé
-if (isset($_GET['delete'])) {
+if (isset($_GET['delete']) && !empty($_GET['delete'])) {
     // Et que l'id du message existe bien
     $id = $_GET['delete'];
 
     // On vérifie si le message a bien été envoyé par l'utilisateur actuellement connecté
-    $req = $pdo->prepare("SELECT COUNT(*) AS count FROM messages WHERE id=:message_id AND idDestinataire=:user_id");
-    $req->execute(['message_id' => $id, 'user_id' => $_SESSION['user']['id']]);
-    $count = $req->fetch()['count'];
+    $messagesRequest = $pdo->prepare("SELECT COUNT(*) AS count FROM messages WHERE id=:message_id AND idDestinataire=:user_id");
+    $messagesRequest->execute(['message_id' => $id, 'user_id' => $_SESSION['user']['id']]);
+    $count = $messagesRequest->fetch()['count'];
     if($count === '1') {
-        $req = $pdo->prepare("DELETE FROM messages WHERE id=:id");
-        $req->execute(['id' => $id]);
+        $messagesRequest = $pdo->prepare("DELETE FROM messages WHERE id=:id");
+        $messagesRequest->execute(['id' => $id]);
     } else {
         Flash::error("This message doesn't exist");
     }
     header('Location: list_messages.php');
     die();
-} //Sinon on regarde si c'est le bouton answer
-else if (isset($_POST['answer'])) {
-    // On continue seulement si l'id du message et le titre son bien set
-    if (isset($_POST['messageid']) && isset($_POST['messagetitle'])) {
-        // TODO reimplement
-        //On récupère alors le nom de l'expéditeur et le titre pour le passer à la page suivante
-//        $_SESSION['receiver'] = $sender;
-//        $_SESSION['retitle'] = 'Re:' . $_POST['messagetitle'];
-        // On dirige ensuite l'utilisateur à la page de rédaction du message
-//        header('Location: message.php');
-//        die();
-    }
 }
+
+// Liste des messages adressés à l'utilisateur
+$messagesRequest = $pdo->prepare("SELECT M.*, M.id AS message_id, C.*, C.id AS user_id FROM messages AS M INNER JOIN collaborators as C ON M.idExpediteur = C.id WHERE idDestinataire = ? ORDER BY time_value DESC");
+$messagesRequest->execute([$_SESSION['user']['id']]);
 
 include 'parts/header.php';
 ?>
@@ -51,23 +39,10 @@ include 'parts/header.php';
         <a class="btn btn-secondary btn-lg mt-5" type="button" href="message.php">+ New message</a>
 
         <?php
-
-        // On récupère l'id de l'utilisateur connecté grâce à son username
-        $user = $_SESSION['user']['login'];
-        $user_query = $pdo->query("SELECT id FROM collaborators WHERE `login`='$user';")->fetch();
-        $user_id = $user_query['id'];
-
-        // Liste des messages adressés à l'utilisateur
-        $messages_query = $pdo->query("SELECT * FROM messages WHERE idDestinataire = '{$user_id}' ORDER BY 'time_value' DESC;");
-
-        $html = "";
         // Pour créer un id unique pour permettre à details de ne révéler qu'un seul contenu de message
         $i = 0;
-        while ($row = $messages_query->fetch(PDO::FETCH_ASSOC)):
+        while ($row = $messagesRequest->fetch()):
             $i += 1;
-            $sender_query = $pdo->query("SELECT login FROM collaborators WHERE `id` = '{$row['idExpediteur']}'; ")->fetch();
-            $sender = $sender_query['login'];
-
             // Pour chaque message qui apparaît, on crée un bouton "Answer", "Delete" et surtout "Details"
             ?>
             <div class='card my-4 mx-auto w-75'>
@@ -81,21 +56,19 @@ include 'parts/header.php';
                             </button>
                         </h4>
                     </div>
-                    <div class='text-muted'><h6>From : <?= $sender ?></h6></div>
-                    <div> <?= $row['time_value'] ?></div>
+                    <div class='text-muted'><h6>From : <?= $row['login'] ?></h6></div>
+                    <div> <?= date('d.m.Y H:i', strtotime($row['time_value'])) ?></div>
                 </div>
                 <div class='collapse' id='collapse<?= $i ?>'>
-                    <div class='card card-body text-justify'>
+                    <div class='card card-body text-justify' style="white-space: pre-line">
                         <?= $row['content'] ?>
                     </div>
                 </div>
 
                 <div class='card-footer text-center'>
                     <form action='' method='post'>
-                        <input style='display:none;' id='messageid' name='messageid' value='<?= $row['id'] ?>'/>
-                        <input style='display:none;' id='messagetitle' name='messagetitle' value='<?= $row['title'] ?>'/>
-                        <a class='btn btn-dark' href="message.php?answer_to=<?= $row['id'] ?>">Answer</a>
-                        <a class='btn btn-danger' href='list_messages.php?delete=<?= $row['id'] ?>'>Delete</a>
+                        <a class='btn btn-dark' href="message.php?answer_to=<?= $row['message_id'] ?>">Answer</a>
+                        <a class='btn btn-danger' href='list_messages.php?delete=<?= $row['message_id'] ?>'>Delete</a>
                     </form>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Database;
+use App\Flash;
 
 require 'includes.php';
 
@@ -17,26 +18,35 @@ try {
      **************************************/
 
     // Drop table messages from file db
+    $pdo->exec("DELETE FROM messages");
+    $pdo->exec("DELETE FROM collaborators");
+    $pdo->exec("DROP TABLE IF EXISTS messages");
     $pdo->exec("DROP TABLE IF EXISTS collaborators");
 
     // Create table messages
     $pdo->exec("CREATE TABLE IF NOT EXISTS collaborators (
-                    id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-                    admin BOOLEAN DEFAULT FALSE,
-                    login TEXT NOT NULL,
-                    password TEXT NOT NULL,
-                    validity BOOLEAN DEFAULT FALSE)");
+        id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+        admin BOOLEAN DEFAULT FALSE,
+        login TEXT NOT NULL,
+        password TEXT NOT NULL,
+        validity BOOLEAN DEFAULT FALSE
+    )");
 
-    // Drop table messages from file db
-    $pdo->exec("DROP TABLE IF EXISTS messages");
     // Create table messages
     $pdo->exec("CREATE TABLE IF NOT EXISTS messages (
-                            id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, 
-                            title VARCHAR(255), 
-                            content TEXT, 
-                            time_value DATETIME,
-                            idExpediteur INTEGER UNSIGNED,
-                            idDestinataire INTEGER UNSIGNED)");
+        id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, 
+        title VARCHAR(255), 
+        content TEXT, 
+        time_value DATETIME,
+        idExpediteur INTEGER UNSIGNED,
+        idDestinataire INTEGER UNSIGNED,
+        FOREIGN KEY (idExpediteur) REFERENCES collaborators(id) 
+            ON UPDATE CASCADE 
+            ON DELETE CASCADE,
+        FOREIGN KEY (idDestinataire) REFERENCES collaborators(id)
+            ON UPDATE CASCADE 
+            ON DELETE CASCADE
+    )");
 
     /**************************************
      * Set initial data                    *
@@ -96,3 +106,6 @@ try {
 } catch (PDOException $e) {
     die($e->getMessage());
 }
+
+Flash::success('Database initialized');
+header('Location: login.php');
