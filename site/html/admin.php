@@ -1,10 +1,52 @@
 <?php
 
+use App\Auth;
 use App\Database;
+use App\Flash;
+use App\Roles;
 
 require 'includes.php';
 
+Auth::check(Roles::ADMIN);
+
 $pdo = Database::getInstance()->getPdo();
+
+if (!empty($_POST)) {
+    if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['role']) && isset($_POST['validity'])) {
+        $username = addslashes($_POST['username']);
+        $password = $_POST['password'];
+        $role = $_POST['role'];
+        $validity = $_POST['validity'];
+
+        if (($role == Roles::ADMIN || $role == Roles::COLLABORATOR) && ($validity == 0 || $validity == 1)) {
+            $req = $pdo->prepare("SELECT COUNT(*) as count FROM collaborators WHERE login='$username'");
+            $req->execute();
+            $count = $req->fetchColumn();
+
+            // On check si l'utilisateur existe déjà
+            if ($count == 0) {
+                $passwordHashed = password_hash($password, PASSWORD_BCRYPT);
+                $req = $pdo->prepare('INSERT INTO collaborators (admin, login, password, validity) VALUES (?, ?, ?, ?)');
+                $result = $req->execute([
+                    $role,
+                    $username,
+                    $passwordHashed,
+                    $validity
+                ]);
+
+                if ($result) {
+                    Flash::success('User successfully created.');
+                } else {
+                    Flash::error('An error occured while creating the user.');
+                }
+            } else {
+                Flash::error('Username already taken, please choose another username.');
+            }
+        }
+    } else {
+        Flash::error('Please provide all information to create a new user.');
+    }
+}
 
 
 $req = $pdo->prepare("SELECT id, login, admin, validity FROM collaborators");
@@ -55,95 +97,57 @@ include 'parts/header.php';
                 </table>
             </div>
         </div>
-    </div>
-<?php
-/**************************************
- * section ajout de user              *
- **************************************/
-// fonctionne uniquement si le nom d'utilisateur et le mdp sont entré le reste sera mis par défaut
-if (isset($_POST['submit']) &&
-    !empty($_POST['username']) &&
-    !empty($_POST['password'])) {
+        <?php
+        /**************************************
+         * section ajout de user              *
+         **************************************/
+        // fonctionne uniquement si le nom d'utilisateur et le mdp sont entré le reste sera mis par défaut
 
-    $username = $_POST['username'];
-    $row = '';
-    try {
-        $row = $pdo->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
-    } catch (Exception $e) {
-    }
-
-    // on check si l'utilisateur existe déjà
-    if ($row['count'] == 0) {
-        $var = password_hash($_POST['password'], PASSWORD_BCRYPT);
-        $request_begin = "INSERT INTO collaborators (";
-        $request_values = ") VALUES (";
-
-        // si le role admin est set on ajoute les données correspondantes
-        if (!empty($_POST['role'])) {
-            $request_begin = $request_begin . "admin,";
-            $request_values = $request_values . $_POST['role'] . ",";
-        }
-
-        $request_begin = $request_begin . " login, password";
-        $request_values = $request_values . "'" . $_POST['username'] . "' ,'" . $var . "'";
-
-        // si l'utilisateur est valide on ajoute les données correspondantes
-        if (!empty($_POST['validity'])) {
-            $request_begin = $request_begin . ", validity";
-            $request_values = $request_values . " ," . $_POST['validity'];
-        }
-
-        $request_values = $request_values . ")";
-        try {
-            // insertion dans la Db
-            $pdo->exec($request_begin . $request_values);
-        } catch (PDOException $e) {
-        }
-        header("Refresh: 0");
-    }
-}
-?>
-    <div class="container">
+        ?>
         <div class="card m-3">
             <div class="card-body">
-                <h3 class="card-title"> Add new user</h3>
-                <form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"
-                      method="post">
-                    <div class="form-group">
-                        <label for="role"> Role </label>
-                        <select class="custom-select" name="role">
-                            <option value="0" selected>Collaborator</option>
-                            <option value="1">Admin</option>
-                        </select>
+                <h3 class="card-title">Add new user</h3>
+                <form action="admin.php" method="post">
+                    <div class="mb-3 row">
+                        <label for="username" class="col-sm-2 col-form-label">Username</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="username"
+                                   name="username" placeholder="Username">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="username"> Username </label>
-                        <input type="text" class="form-control"
-                               name="username" placeholder="Username" required>
+                    <div class="mb-3 row">
+                        <label for="password" class="col-sm-2 col-form-label">Password</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="password"
+                                   name="password" placeholder="Password">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="password"> Password </label>
-                        <input type="password" class="form-control"
-                               name="password" placeholder="Password" required>
+                    <div class="mb-3 row">
+                        <label for="role" class="col-sm-2 col-form-label">Role</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="role" id="role">
+                                <option value="0" selected>Collaborator</option>
+                                <option value="1">Admin</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="validity"> Validity </label>
-                        <select class="custom-select" name="role">
-                            <option value="0">Not active</option>
-                            <option value="1" selected>Active</option>
-                        </select>
+                    <div class="mb-3 row">
+                        <label for="validity" class="col-sm-2 col-form-label">Validity</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="validity" id="validity">
+                                <option value="0">Not active</option>
+                                <option value="1" selected>Active</option>
+                            </select>
+                        </div>
                     </div>
-                    <button class="btn" type="submit" name="submit">Submit</button>
+                    <button class="btn btn-primary" type="submit">Create</button>
                 </form>
             </div>
         </div>
-    </div>
 
-    <div class="container">
         <div class="card m-3">
             <div class="card-body">
                 <h3 class="card-title"> Modify a user </h3>
-
                 <?php
                 /**************************************
                  * section modification de user       *
@@ -205,9 +209,7 @@ if (isset($_POST['submit']) &&
                 </form>
             </div>
         </div>
-    </div>
 
-    <div class="container">
         <div class="card m-3">
             <div class="card-body">
                 <h3 class="card-title"> Delete an User </h3>

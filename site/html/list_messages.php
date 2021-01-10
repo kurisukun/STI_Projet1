@@ -11,7 +11,7 @@ Auth::check();
 $pdo = Database::getInstance()->getPdo();
 
 // Vérifie que le bouton delet a bien été pressé
-if (isset($_GET['delete']) && !empty($_GET['delete'])) {
+if (isset($_GET['delete'])) {
     // Et que l'id du message existe bien
     $id = $_GET['delete'];
 

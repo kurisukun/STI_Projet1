@@ -11,11 +11,11 @@ $pdo = Database::getInstance()->getPdo();
 
 
 if (!empty($_POST)) {
-    if (!empty($_POST['title']) && !empty($_POST['contact']) && !empty($_POST['message'])) {
+    if (isset($_POST['title']) && isset($_POST['contact']) && isset($_POST['message'])) {
         // On récupère toutes les informations inscrites dans le formulaire
         $title = $_POST["title"];
 
-        if(isset($_POST['old_message']) && !empty($_POST['old_message'])) {
+        if(isset($_POST['old_message'])) {
             $message = htmlentities($_POST["message"]) . "\r\n\r\n" . htmlentities($_POST["old_message"]);
         } else {
             $message = htmlentities($_POST["message"]);

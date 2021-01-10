@@ -15,7 +15,8 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
     <div class="container">
         <a class="navbar-brand" href="#">STI Secure Mail</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault"
+                aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
@@ -23,9 +24,11 @@
                 <li class="nav-item active">
                     <a class="nav-link" aria-current="page" href="/list_messages.php">Messages</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin.php">Admin</a>
-                </li>
+                <?php if (isset($_SESSION['user']) && $_SESSION['user']['admin'] === '1'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin.php">Admin</a>
+                    </li>
+                <?php endif; ?>
                 <li class="nav-item">
                     <a class="nav-link" href="/change_password.php">Change password</a>
                 </li>
