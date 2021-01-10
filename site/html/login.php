@@ -18,44 +18,28 @@ $pdo = Database::getInstance()->getPdo();
 if (!empty($_POST['username']) && !empty($_POST['password'])) {
     $username = $_POST['username'];
 
-    try {
-        // récupère l'utilisateur s'il existe dans la db
-        $row = $pdo->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
-        // récupère les données correspondantes
-        $password_db = $pdo->query("SELECT password,validity FROM collaborators WHERE `login`='$username'")->fetch();
-    } catch (Exception $e) {
-        die($e->getMessage());
-    }
+    // récupère l'utilisateur s'il existe dans la db
+    $req = $pdo->prepare("SELECT * FROM collaborators WHERE login=:username");
+    $req->execute(['username' => $username]);
+    $data = $req->fetch();
+    // récupère les données correspondantes
 
-    $count = $row['count'];
     // si l'utilisateur n'existe pas ou que les mdp ou qu'il est invalide sont pas correct on refuse la connexion
-    if ($count > 0 && password_verify($_POST['password'], $password_db['password']) && $password_db['validity'] > 0) {
-        $row = '';
-        try {
-            // récuère les données pour set la session
-            $row = $pdo->query("SELECT * FROM collaborators WHERE `login`='$username'")->fetch();
-        } catch (Exception $e) {
-            die($e->getMessage());
-        }
-        // set de la session standard
-        $_SESSION['username'] = $username;
-        // set de la session admin
-        if ($row['admin'] == 1) {
-            $_SESSION['admin'] = $row['admin'];
-        }
-
-        header('Location: list_messages.php');
-        die();
-    } else {
-        echo "<div class='m-3 d-flex align-items-center justify-content-center'>
+    if($data) {
+        if (password_verify($_POST['password'], $data['password']) && $data['validity'] === '1') {
+            $_SESSION['user'] = $data;
+            header('Location: list_messages.php');
+            die();
+        } else {
+            echo "<div class='m-3 d-flex align-items-center justify-content-center'>
                     <div class='alert alert-danger'>Wrong username or password.</div>
                 </div>";
+        }
     }
 }
 
 include 'parts/header.php';
 ?>
-
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-4">
@@ -77,5 +61,4 @@ include 'parts/header.php';
             </div>
         </div>
     </div>
-
 <?php include 'parts/footer.php';

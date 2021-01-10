@@ -36,3 +36,7 @@
         </div>
     </div>
 </nav>
+
+<div class="container">
+    <?php \App\Flash::display(); ?>
+</div>

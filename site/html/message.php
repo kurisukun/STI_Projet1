@@ -1,9 +1,12 @@
 <?php
 
+use App\Auth;
 use App\Database;
 
 require 'includes.php';
-include("redirect.php");
+
+Auth::check();
+
 include 'parts/header.php';
 ?>
 

@@ -1,12 +1,12 @@
 <?php
+
+use App\Database;
+
 require 'includes.php';
 
 include 'parts/header.php';
 // Create (connect to) SQLite database in file
-$file_db = new PDO('sqlite:../databases/database.sqlite');
-// Set errormode to exceptions
-$file_db->setAttribute(PDO::ATTR_ERRMODE,
-    PDO::ERRMODE_EXCEPTION);
+$pdo = Database::getInstance()->getPdo();
 // inclusion du layout de la page et de la redirection en cas de non connexion
 include('redirect.php');
 
@@ -18,7 +18,7 @@ if (!empty($_POST['password-modifier']) && !empty($_POST['password-modifier_repe
     if (password_verify($_POST['password-modifier_repeat'], $password)) {
         try {
             // modification dans la db
-            $query = $file_db->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
+            $query = $pdo->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
         } catch (Exception $e) {
         }
     } else {
