@@ -11,6 +11,25 @@ Auth::check(Roles::ADMIN);
 
 $pdo = Database::getInstance()->getPdo();
 
+if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+
+    // On ne peut pas se supprimer soi-même.
+    if ($id !== $_SESSION['user']['id']) {
+        $req = $pdo->prepare('DELETE FROM collaborators WHERE id = ?');
+        $result = $req->execute([$id]);
+        if($result) {
+            Flash::success('User deleted');
+        } else {
+            Flash::error('An error occured while deleting the user, please try again.');
+        }
+    } else {
+        Flash::error('Good try but you cannot delete yourself');
+    }
+    header('Location: admin.php');
+    die();
+}
+
 if (!empty($_POST)) {
     if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['role']) && isset($_POST['validity'])) {
         $username = addslashes($_POST['username']);
@@ -85,10 +104,10 @@ include 'parts/header.php';
                             <td><?= $user['admin'] ?></td>
                             <td><?= $user['validity'] ?></td>
                             <td>
-                                <a href='admin.php?delete=<?= $user['id'] ?>' class='btn btn-primary btn-sm'>Edit</a>
+                                <a href='admin.php?edit=<?= $user['id'] ?>' class='btn btn-primary btn-sm'>Edit</a>
                                 <?php if ($user['id'] !== $_SESSION['user']['id']): ?>
-                                    <a href='admin.php?edit=<?= $user['id'] ?>'
-                                       class='btn btn-danger btn-sm'>&times;</a>
+                                    <a href='admin.php?delete=<?= $user['id'] ?>'
+                                       class='btn btn-danger btn-sm' onclick="return confirm('Are your sure you want to delete this user ?\nThere is no rollback with this action')">&times;</a>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -207,34 +226,6 @@ include 'parts/header.php';
                     </div>
                     <button class="btn" type="Modifiy" name="Modifiy">Modifiy</button>
                 </form>
-            </div>
-        </div>
-
-        <div class="card m-3">
-            <div class="card-body">
-                <h3 class="card-title"> Delete an User </h3>
-                <form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"
-                      method="post">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="username-delete" placeholder="Username" required>
-                    </div>
-                    <button class="btn" type="Delete" name="Delete">Delete</button>
-                </form>
-                <?php
-                /**************************************
-                 * section suppression de user        *
-                 **************************************/
-                if (isset($_POST['Delete']) && !empty($_POST['username-delete'])) {
-                    $username = $_POST['username-delete'];
-                    try {
-                        // suppression de l'utilisateur dans la Db
-                        $pdo->query("DELETE FROM collaborators WHERE `login`='$username'");
-                    } catch (Exception $e) {
-                    }
-
-                    header("Refresh: 0");
-                }
-                ?>
             </div>
         </div>
     </div>

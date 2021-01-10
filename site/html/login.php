@@ -11,7 +11,7 @@ if(isset($_SESSION['user'])) {
 }
 
 
-/**************************************
+/***************************************
  * Create databases and                *
  * open connections                    *
  **************************************/
@@ -36,9 +36,7 @@ if (!empty($_POST['username']) && !empty($_POST['password'])) {
             header('Location: list_messages.php');
             die();
         } else {
-            echo "<div class='m-3 d-flex align-items-center justify-content-center'>
-                    <div class='alert alert-danger'>Wrong username or password.</div>
-                </div>";
+            Flash::error('Wrong username or password');
         }
     }
 }
