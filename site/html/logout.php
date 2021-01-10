@@ -1,7 +1,7 @@
 <?php
 require 'includes.php';
 
-unset($_SESSION["username"]);
-unset($_SESSION["admin"]);
+unset($_SESSION['user']);
+\App\Flash::success("You're successfully logged out");
 header('Location: login.php');
 die();

@@ -10,6 +10,10 @@ class Flash {
         self::set($message, 'danger');
     }
 
+    public static function success($message): void {
+        self::set($message, 'success');
+    }
+
     public static function set($message, $type = 'success'): void {
         $_SESSION['flash']['type'] = $type;
         $_SESSION['flash']['message'] = $message;

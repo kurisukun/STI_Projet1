@@ -20,14 +20,14 @@ if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
 
     // On vérifie si le message a bien été envoyé par l'utilisateur actuellement connecté
-    $req = $pdo->prepare("SELECT COUNT(*) AS count FROM messages WHERE id=:message_id AND idExpediteur=:user_id");
+    $req = $pdo->prepare("SELECT COUNT(*) AS count FROM messages WHERE id=:message_id AND idDestinataire=:user_id");
     $req->execute(['message_id' => $id, 'user_id' => $_SESSION['user']['id']]);
-    $count = $req->fetch();
+    $count = $req->fetch()['count'];
     if($count === '1') {
         $req = $pdo->prepare("DELETE FROM messages WHERE id=:id");
         $req->execute(['id' => $id]);
     } else {
-        Flash::error("Ce message n'existe pas");
+        Flash::error("This message doesn't exist");
     }
     header('Location: list_messages.php');
     die();
@@ -93,9 +93,8 @@ include 'parts/header.php';
                 <div class='card-footer text-center'>
                     <form action='' method='post'>
                         <input style='display:none;' id='messageid' name='messageid' value='<?= $row['id'] ?>'/>
-                        <input style='display:none;' id='messagetitle' name='messagetitle'
-                               value='<?= $row['title'] ?>'/>
-                        <input class='btn btn-dark' name='answer' value='Answer' type='submit'/>
+                        <input style='display:none;' id='messagetitle' name='messagetitle' value='<?= $row['title'] ?>'/>
+                        <a class='btn btn-dark' href="message.php?answer_to=<?= $row['id'] ?>">Answer</a>
                         <a class='btn btn-danger' href='list_messages.php?delete=<?= $row['id'] ?>'>Delete</a>
                     </form>
                 </div>

@@ -1,11 +1,15 @@
 <?php
 
 use App\Database;
+use App\Flash;
 
 require 'includes.php';
 
-// Set default timezone
-date_default_timezone_set('UTC');
+if(isset($_SESSION['user'])) {
+    header('Location: list_messages.php');
+    die();
+}
+
 
 /**************************************
  * Create databases and                *
@@ -28,6 +32,7 @@ if (!empty($_POST['username']) && !empty($_POST['password'])) {
     if($data) {
         if (password_verify($_POST['password'], $data['password']) && $data['validity'] === '1') {
             $_SESSION['user'] = $data;
+            Flash::success("Login successful");
             header('Location: list_messages.php');
             die();
         } else {
