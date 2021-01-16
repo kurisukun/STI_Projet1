@@ -10,6 +10,10 @@ require 'includes.php';
 Auth::check(Roles::ADMIN);
 
 $pdo = Database::getInstance()->getPdo();
+if (empty($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
+$token = $_SESSION['token'];
 
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
@@ -31,39 +35,43 @@ if (isset($_GET['delete'])) {
 }
 
 if (!empty($_POST)) {
-    if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['role']) && isset($_POST['validity'])) {
-        $username = addslashes($_POST['username']);
-        $password = $_POST['password'];
-        $role = $_POST['role'];
-        $validity = $_POST['validity'];
-
-        if (($role == Roles::ADMIN || $role == Roles::COLLABORATOR) && ($validity == 0 || $validity == 1)) {
-            $req = $pdo->prepare("SELECT COUNT(*) as count FROM collaborators WHERE login='$username'");
-            $req->execute();
-            $count = $req->fetchColumn();
-
-            // On check si l'utilisateur existe déjà
-            if ($count == 0) {
-                $passwordHashed = password_hash($password, PASSWORD_BCRYPT);
-                $req = $pdo->prepare('INSERT INTO collaborators (admin, login, password, validity) VALUES (?, ?, ?, ?)');
-                $result = $req->execute([
-                    $role,
-                    $username,
-                    $passwordHashed,
-                    $validity
-                ]);
-
-                if ($result) {
-                    Flash::success('User successfully created.');
-                } else {
-                    Flash::error('An error occured while creating the user.');
+    if (!empty($_POST['token'])) {
+        if(hash_equals($_SESSION['token'], $_POST['token'])){
+            if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['role']) && isset($_POST['validity'])) {
+                $username = addslashes($_POST['username']);
+                $password = $_POST['password'];
+                $role = $_POST['role'];
+                $validity = $_POST['validity'];
+            
+                if (($role == Roles::ADMIN || $role == Roles::COLLABORATOR) && ($validity == 0 || $validity == 1)) {
+                    $req = $pdo->prepare("SELECT COUNT(*) as count FROM collaborators WHERE login='$username'");
+                    $req->execute();
+                    $count = $req->fetchColumn();
+                
+                    // On check si l'utilisateur existe déjà
+                    if ($count == 0) {
+                        $passwordHashed = password_hash($password, PASSWORD_BCRYPT);
+                        $req = $pdo->prepare('INSERT INTO collaborators (admin, login, password, validity) VALUES (?, ?, ?, ?)');
+                        $result = $req->execute([
+                            $role,
+                            $username,
+                            $passwordHashed,
+                            $validity
+                        ]);
+                        
+                        if ($result) {
+                            Flash::success('User successfully created.');
+                        } else {
+                            Flash::error('An error occured while creating the user.');
+                        }
+                    } else {
+                        Flash::error('Username already taken, please choose another username.');
+                    }
                 }
             } else {
-                Flash::error('Username already taken, please choose another username.');
+                Flash::error('Please provide all information to create a new user.');
             }
         }
-    } else {
-        Flash::error('Please provide all information to create a new user.');
     }
 }
 
@@ -159,6 +167,7 @@ include 'parts/header.php';
                             </select>
                         </div>
                     </div>
+                    <input type="hidden" name="token" value="<?php echo $token?>">
                     <button class="btn btn-primary" type="submit">Create</button>
                 </form>
             </div>

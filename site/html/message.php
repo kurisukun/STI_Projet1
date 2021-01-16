@@ -9,49 +9,58 @@ require 'includes.php';
 Auth::check();
 $pdo = Database::getInstance()->getPdo();
 
+if (empty($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
+$token = $_SESSION['token'];
+
 
 if (!empty($_POST)) {
-    if (isset($_POST['title']) && isset($_POST['contact']) && isset($_POST['message'])) {
-        // On récupère toutes les informations inscrites dans le formulaire
-        $title = $_POST["title"];
+    if (!empty($_POST['token'])) {
+        if(hash_equals($_SESSION['token'], $_POST['token'])){
+            if (isset($_POST['title']) && isset($_POST['contact']) && isset($_POST['message'])) {
+                // On récupère toutes les informations inscrites dans le formulaire
+                $title = $_POST["title"];
 
-        if(isset($_POST['old_message'])) {
-            $message = htmlentities($_POST["message"]) . "\r\n\r\n" . htmlentities($_POST["old_message"]);
-        } else {
-            $message = htmlentities($_POST["message"]);
-        }
+                if(isset($_POST['old_message'])) {
+                    $message = htmlentities($_POST["message"]) . "\r\n\r\n" . htmlentities($_POST["old_message"]);
+                } else {
+                    $message = htmlentities($_POST["message"]);
+                }
 
-        $time = date('Y-m-d H:i:s');
-        $senderId = $_SESSION['user']['id'];
-        $receiverId = $_POST['contact'];
+                $time = date('Y-m-d H:i:s');
+                $senderId = $_SESSION['user']['id'];
+                $receiverId = $_POST['contact'];
 
-        $req = $pdo->prepare("SELECT COUNT(*) as count FROM collaborators WHERE id=?");
-        $req->execute([$receiverId]);
-        $count = $req->fetch()['count'];
+                $req = $pdo->prepare("SELECT COUNT(*) as count FROM collaborators WHERE id=?");
+                $req->execute([$receiverId]);
+                $count = $req->fetch()['count'];
 
-        if ($count === '1') {
-            $req = $pdo->prepare("INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES (?, ?, ?, ?, ?);");
-            $result = $req->execute([
-                $title,
-                $message,
-                $time,
-                $senderId,
-                $receiverId
-            ]);
-            if ($result) {
-                Flash::success("Message sent successfully");
-                header('Location: list_messages.php');
+                if ($count === '1') {
+                    $req = $pdo->prepare("INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES (?, ?, ?, ?, ?);");
+                    $result = $req->execute([
+                        $title,
+                        $message,
+                        $time,
+                        $senderId,
+                        $receiverId
+                    ]);
+                    if ($result) {
+                        Flash::success("Message sent successfully");
+                        header('Location: list_messages.php');
+                    } else {
+                        Flash::error("An error occured whiled sending the message");
+                        header('Location: message.php');
+                    }
+                    die();
+                } else {
+                    Flash::error("Contact doesn't exist");
+                }
+                //On vérifie bien que le contact adressé existe bien dans la base de données
             } else {
-                Flash::error("An error occured whiled sending the message");
-                header('Location: message.php');
+                Flash::error('Some field are not filled successfully');
             }
-            die();
-        } else {
-            Flash::error("Contact doesn't exist");
         }
-        //On vérifie bien que le contact adressé existe bien dans la base de données
-    } else {
-        Flash::error('Some field are not filled successfully');
     }
 }
 
@@ -117,6 +126,7 @@ include 'parts/header.php';
                 <label class="form-label" for="message">Message</label>
                 <textarea class="form-control" name="message" id="message" rows="10"></textarea>
             </div>
+            <input type="hidden" name="token" value="<?php echo $token?>">
             <button type="submit" class="btn btn-primary btn-lg"><?= $doAnswer ? 'Respond' : 'Send' ?></button>
             <a href="list_messages.php" class="btn btn-secondary btn-sm">Cancel</a>
         </form>
