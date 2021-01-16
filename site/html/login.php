@@ -10,6 +10,11 @@ if(isset($_SESSION['user'])) {
     die();
 }
 
+if (empty($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
+$token = $_SESSION['token'];
+
 
 /***************************************
  * Create databases and                *
@@ -59,6 +64,7 @@ include 'parts/header.php';
                         <input type="password" class="form-control"
                                name="password" placeholder="Password" required>
                     </div>
+                    <input name="token" value="<?php echo $token?>">
                     <button class="btn btn-lg btn-primary d-block mx-auto" type="submit">Login</button>
                 </form>
             </div>
