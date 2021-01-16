@@ -18,8 +18,12 @@ try {
      **************************************/
 
     // Drop table messages from file db
-    $pdo->exec("DELETE FROM messages");
-    $pdo->exec("DELETE FROM collaborators");
+    try{
+        $pdo->exec("DELETE FROM messages");
+        $pdo->exec("DELETE FROM collaborators");
+    }
+    catch(Exception $e){}
+    
     $pdo->exec("DROP TABLE IF EXISTS messages");
     $pdo->exec("DROP TABLE IF EXISTS collaborators");
 
