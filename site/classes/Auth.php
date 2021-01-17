@@ -20,4 +20,10 @@ class Auth {
         }
     }
 
+    public static function logout() {
+        if(isset($_SESSION['user'])) {
+            unset($_SESSION['user']);
+        }
+    }
+
 }

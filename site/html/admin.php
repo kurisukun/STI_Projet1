@@ -1,6 +1,7 @@
 <?php
 
 use App\Auth;
+use App\CsrfManager;
 use App\Database;
 use App\Flash;
 use App\Roles;
@@ -10,68 +11,77 @@ require 'includes.php';
 Auth::check(Roles::ADMIN);
 
 $pdo = Database::getInstance()->getPdo();
-if (empty($_SESSION['token'])) {
-    $_SESSION['token'] = bin2hex(random_bytes(32));
-}
-$token = $_SESSION['token'];
 
 if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
+    if (isset($_GET['token']) && CsrfManager::checkToken($_GET['token'])) {
+        $id = $_GET['delete'];
 
-    // On ne peut pas se supprimer soi-même.
-    if ($id !== $_SESSION['user']['id']) {
-        $req = $pdo->prepare('DELETE FROM collaborators WHERE id = ?');
-        $result = $req->execute([$id]);
-        if($result) {
-            Flash::success('User deleted');
+        // On ne peut pas se supprimer soi-même.
+        if ($id !== $_SESSION['user']['id']) {
+            $req = $pdo->prepare('DELETE FROM collaborators WHERE id = ?');
+            $result = $req->execute([$id]);
+            if ($result) {
+                Flash::success('User deleted');
+            } else {
+                Flash::error('An error occured while deleting the user, please try again.');
+            }
         } else {
-            Flash::error('An error occured while deleting the user, please try again.');
+            Flash::error('Good try but you cannot delete yourself');
         }
+        header('Location: admin.php');
+        die();
     } else {
-        Flash::error('Good try but you cannot delete yourself');
+        Flash::error('Invalid CSRF token');
+        header('Location: admin.php');
+        die();
     }
-    header('Location: admin.php');
-    die();
 }
 
 if (!empty($_POST)) {
-    if (!empty($_POST['token'])) {
-        if(hash_equals($_SESSION['token'], $_POST['token'])){
-            if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['role']) && isset($_POST['validity'])) {
-                $username = addslashes($_POST['username']);
-                $password = $_POST['password'];
-                $role = $_POST['role'];
-                $validity = $_POST['validity'];
-            
-                if (($role == Roles::ADMIN || $role == Roles::COLLABORATOR) && ($validity == 0 || $validity == 1)) {
-                    $req = $pdo->prepare("SELECT COUNT(*) as count FROM collaborators WHERE login='$username'");
-                    $req->execute();
-                    $count = $req->fetchColumn();
-                
-                    // On check si l'utilisateur existe déjà
-                    if ($count == 0) {
-                        $passwordHashed = password_hash($password, PASSWORD_BCRYPT);
-                        $req = $pdo->prepare('INSERT INTO collaborators (admin, login, password, validity) VALUES (?, ?, ?, ?)');
-                        $result = $req->execute([
-                            $role,
-                            $username,
-                            $passwordHashed,
-                            $validity
-                        ]);
-                        
-                        if ($result) {
-                            Flash::success('User successfully created.');
-                        } else {
-                            Flash::error('An error occured while creating the user.');
-                        }
+    if (isset($_POST['token']) && CsrfManager::checkToken($_POST['token'])) {
+        if (isset($_POST['username'])
+            && !empty($_POST['username'])
+            && isset($_POST['password'])
+            && !empty($_POST['password'])
+            && isset($_POST['role'])
+            && isset($_POST['validity'])) {
+            $username = addslashes($_POST['username']);
+            $password = $_POST['password'];
+            $role = $_POST['role'];
+            $validity = $_POST['validity'];
+
+            if (($role == Roles::ADMIN || $role == Roles::COLLABORATOR) && ($validity == 0 || $validity == 1)) {
+                $req = $pdo->prepare("SELECT COUNT(*) FROM collaborators WHERE login = ?");
+                $req->execute([$username]);
+                $count = $req->fetchColumn();
+
+                // On check si l'utilisateur existe déjà
+                if ($count === '0') {
+                    $passwordHashed = password_hash($password, PASSWORD_BCRYPT);
+                    $req = $pdo->prepare('INSERT INTO collaborators (admin, login, password, validity) VALUES (?, ?, ?, ?)');
+                    $result = $req->execute([
+                        $role,
+                        $username,
+                        $passwordHashed,
+                        $validity
+                    ]);
+
+                    if ($result) {
+                        Flash::success('User successfully created.');
                     } else {
-                        Flash::error('Username already taken, please choose another username.');
+                        Flash::error('An error occured while creating the user.');
                     }
+                } else {
+                    Flash::error('Username already taken, please choose another username.');
                 }
             } else {
-                Flash::error('Please provide all information to create a new user.');
+                Flash::error('Invalid role or validity.');
             }
+        } else {
+            Flash::error('Please provide all information to create a new user.');
         }
+    } else {
+        Flash::error('Invalid CSRF token');
     }
 }
 
@@ -96,8 +106,8 @@ include 'parts/header.php';
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Username</th>
-                        <th scope="col">isAdmin</th>
-                        <th scope="col">isValid</th>
+                        <th scope="col">Is admin</th>
+                        <th scope="col">Is active</th>
                         <th scope="col">Actions</th>
                     </tr>
                     </thead>
@@ -109,13 +119,14 @@ include 'parts/header.php';
                             <td>
                                 <?= $user['login'] ?> <?= $user['login'] === $_SESSION['user']['login'] ? '<span class="badge rounded-pill bg-primary">It\'s you</span>' : '' ?>
                             </td>
-                            <td><?= $user['admin'] ?></td>
-                            <td><?= $user['validity'] ?></td>
+                            <td><?= $user['admin'] ? '<i class="bi bi-check fs-3 text-success"></i>': '<i class="bi bi-x fs-3 text-danger"></i>' ?></td>
+                            <td><?= $user['validity'] ? '<i class="bi bi-check fs-3 text-success"></i>': '<i class="bi bi-x fs-3 text-danger"></i>' ?></td>
                             <td>
-                                <a href='admin.php?edit=<?= $user['id'] ?>' class='btn btn-primary btn-sm'>Edit</a>
+                                <a href='edit_user.php?id=<?= $user['id'] ?>' class='btn btn-primary btn-sm'>Edit</a>
                                 <?php if ($user['id'] !== $_SESSION['user']['id']): ?>
-                                    <a href='admin.php?delete=<?= $user['id'] ?>'
-                                       class='btn btn-danger btn-sm' onclick="return confirm('Are your sure you want to delete this user ?\nThere is no rollback with this action')">&times;</a>
+                                    <a href="admin.php?delete=<?= $user['id'] ?>&token=<?= CsrfManager::getToken() ?>"
+                                       class='btn btn-danger btn-sm'
+                                       onclick="return confirm('Are your sure you want to delete this user ?\nThere is no rollback possible after this action')">&times;</a>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -167,73 +178,8 @@ include 'parts/header.php';
                             </select>
                         </div>
                     </div>
-                    <input type="hidden" name="token" value="<?php echo $token?>">
+                    <input type="hidden" name="token" value="<?= CsrfManager::getToken() ?>">
                     <button class="btn btn-primary" type="submit">Create</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="card m-3">
-            <div class="card-body">
-                <h3 class="card-title"> Modify a user </h3>
-                <?php
-                /**************************************
-                 * section modification de user       *
-                 **************************************/
-
-                if (isset($_POST['Modifiy'])) {
-                    // préparation des attributs dans des variables locales
-                    $username = $_POST['username-modifier'];
-                    $role = $_POST['role-modifier'];
-                    $password = $var = password_hash($_POST['password-modifier'], PASSWORD_BCRYPT);
-                    $validity = $_POST['validity-modifier'];
-                    try {
-                        // pourchaque attributs on test s'il doit être changé et on fait une requête indépendante
-                        if (!empty($_POST['role-modifier'])) {
-                            $query = $pdo->query("UPDATE collaborators SET admin='$role' WHERE `login`='$username';");
-                        }
-
-                        if (!empty($_POST['password-modifier'])) {
-                            $query = $pdo->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
-                        }
-
-                        if (!empty($_POST['validity-modifier'])) {
-                            $query = $pdo->query("UPDATE collaborators SET validity='$validity' WHERE `login`='$username';");
-                        }
-                    } catch (Exception $e) {
-                        // affichage d'une erreur si une erreur survient
-                        echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
-                    <div class='alert alert-danger'>An error occured. Contact your magnificient administrator.</div>
-                </div>";
-                    }
-
-                    header("Refresh:0");
-                }
-                ?>
-
-                <form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"
-                      method="post">
-
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="username-modifier"
-                               placeholder="Username you want to modify" required>
-                    </div>
-                    <div class="form-group">
-                        <select class="custom-select" name="role-modifier">
-                            <option value="0">Collaborator</option>
-                            <option value="1" selected>Admin</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" name="password-modifier" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <select class="custom-select" name="validity-modifier">
-                            <option value="0">Not active</option>
-                            <option value="1" selected>Active</option>
-                        </select>
-                    </div>
-                    <button class="btn" type="Modifiy" name="Modifiy">Modifiy</button>
                 </form>
             </div>
         </div>

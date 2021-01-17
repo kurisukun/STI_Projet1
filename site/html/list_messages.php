@@ -1,6 +1,7 @@
 <?php
 
 use App\Auth;
+use App\CsrfManager;
 use App\Database;
 use App\Flash;
 
@@ -12,21 +13,28 @@ $pdo = Database::getInstance()->getPdo();
 
 // Vérifie que le bouton delet a bien été pressé
 if (isset($_GET['delete'])) {
-    // Et que l'id du message existe bien
-    $id = $_GET['delete'];
 
-    // On vérifie si le message a bien été envoyé par l'utilisateur actuellement connecté
-    $messagesRequest = $pdo->prepare("SELECT COUNT(*) AS count FROM messages WHERE id=:message_id AND idDestinataire=:user_id");
-    $messagesRequest->execute(['message_id' => $id, 'user_id' => $_SESSION['user']['id']]);
-    $count = $messagesRequest->fetch()['count'];
-    if($count === '1') {
-        $messagesRequest = $pdo->prepare("DELETE FROM messages WHERE id=:id");
-        $messagesRequest->execute(['id' => $id]);
+    if(isset($_GET['token']) && CsrfManager::checkToken($_GET['token'])) {
+        // Et que l'id du message existe bien
+        $id = $_GET['delete'];
+
+        // On vérifie si le message a bien été envoyé par l'utilisateur actuellement connecté
+        $messagesRequest = $pdo->prepare("SELECT COUNT(*) FROM messages WHERE id=:message_id AND idDestinataire=:user_id");
+        $messagesRequest->execute(['message_id' => $id, 'user_id' => $_SESSION['user']['id']]);
+        $count = $messagesRequest->fetchColumn();
+        if($count === '1') {
+            $messagesRequest = $pdo->prepare("DELETE FROM messages WHERE id=:id");
+            $messagesRequest->execute(['id' => $id]);
+        } else {
+            Flash::error("This message doesn't exist");
+        }
+        header('Location: list_messages.php');
+        die();
     } else {
-        Flash::error("This message doesn't exist");
+        Flash::error('Invalid CSRF token');
+        header('Location: list_messages.php');
+        die();
     }
-    header('Location: list_messages.php');
-    die();
 }
 
 // Liste des messages adressés à l'utilisateur
@@ -66,9 +74,9 @@ include 'parts/header.php';
                 </div>
 
                 <div class='card-footer text-center'>
-                    <form action='' method='post'>
+                    <form method='post'>
                         <a class='btn btn-dark' href="message.php?answer_to=<?= $row['message_id'] ?>">Answer</a>
-                        <a class='btn btn-danger' href='list_messages.php?delete=<?= $row['message_id'] ?>'>Delete</a>
+                        <a class='btn btn-danger' href='list_messages.php?delete=<?= $row['message_id'] ?>&token=<?= CsrfManager::getToken() ?>'>Delete</a>
                     </form>
                 </div>
             </div>
