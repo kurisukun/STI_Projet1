@@ -1,6 +1,6 @@
 ## Guide d'utilisation
 
-**Auteurs:** Arn Jérôme, Barros Henriques Chris
+**Auteurs:** Balsiger Gil, Barros Henriques Chris
 
 ### Lancement de l'application. 
 1. Pour commencer, exécuter le script run.sh. ce dernier va lancer le container docker et initialiser la base de données. 
@@ -13,24 +13,34 @@
 
 
 
+### Page d'initialisation de la base de données
+
+En lançant le Docker, on arrive sur cette page d'initialisation de la base de données:
+
+
+
+![image-20210123160615010](img/image-20210123160615010.png)
+
+
+
 
 ### Page de login
 
 En lançant le Docker, on arrive sur cette page de login:
 
-![image-20201015200706670](img/image-20201015200706670.png)
+![image-20210123160728545](img/image-20210123160728545.png)
 
 On ne peut accéder à aucune fonctionnalité tant que l'on n'est pas connecté. Si on entre des identifiants erronés, il va s'en dire que la connexion est refusée.
 
 Lorsque la connexion est faite, on arrive sur la page des messages, i.e. la boîte de réception. Si un utlisateur est un simple collaborateur, la barre de navigation du haut change et lui donne accès aux pages "Change password" et à un bouton de déconnexion.
 
-![image-20201015201218712](img/image-20201015201218712.png)
+![image-20210123160749363](img/image-20210123160749363.png)
 
 
 
 Si celui-ci a le rôle d'admin, il obtient l'accès à la page "Admin".
 
-![image-20201015201631380](img/image-20201015201631380.png)
+![image-20210123160837922](img/image-20210123160837922.png)
 
 
 
@@ -44,7 +54,7 @@ Lorsque l'on clique sur l'onglet Message, on arrive sur cette page où la ligne 
 
 On voit finalement qu'il est possible de simplement cliquer sur "New Message" afin d'envoyer un nouveau message.
 
-![image-20201015005015322](img/image-20201015005015322.png)
+![image-20210123161130926](img/image-20210123161130926.png)
 
 
 
@@ -64,15 +74,13 @@ Ce bouton sert à supprimer le message de notre boîte de réception. Un message
 
 On arrive sur cette page qui permet simplement d'envoyer un message. Afin d'envoyer un message, il faut au moins renseigner le titre ainsi que le contact à qui l'envoyer. Il est donc possible d'envoyer un message vide.
 
-![image-20201015005403191](img/image-20201015005403191.png)
+![image-20210123161209744](img/image-20210123161209744.png)
 
 
 
-Il n'est pas possible d'envoyer un message à un utilisateur qui n'existe pas, sinon quoi, un message d'erreur apparaît et annule l'envoi.
+Il n'est pas possible d'envoyer un message qu'aux utilisateurs inscrits dans la liste déroulante.
 
-![image-20201015005703582](img/image-20201015005703582.png)
-
-
+ 
 
 #### Bouton "Answer"
 
@@ -86,9 +94,9 @@ avec les champs de titre et de destinataire déjà renseignés afin de directeme
 
 ### Onglet "Change password"
 
-Cette page sert simplement à modifier notre mot de passe utilisateur.
+Cette page sert simplement à modifier notre mot de passe utilisateur. Il est demandé d'entrer aussi bien l'ancien mot de passe que le nouveau en le répétant.
 
-![image-20201015010302694](img/image-20201015010302694.png)
+![image-20210123161417054](img/image-20210123161417054.png)
 
 Si on entre deux mots de passe différents, un message d'erreur apparaît.
 
@@ -98,26 +106,27 @@ Si on entre deux mots de passe différents, un message d'erreur apparaît.
 Cette partie n'est accessible que si un utilisateur a le rôle d'admin. Lorsque l'on arrive sur la page, on a différentes section:
 
 
-La list de tous les utlisateurs présents dans la base de données. C'est par ce biais qu'on peut vérifier qu'une insertion ou suppression d'un utilisateur a bien été exécutée. 
+La liste de tous les utilisateurs présents dans la base de données. C'est par ce biais qu'on peut vérifier qu'une insertion ou suppression d'un utilisateur a bien été exécutée. 
 
-![image-20201015215628003](img/image-20201015215628003.png)
-
-
-
-Un formulaire pour ajouter un nouveau collaborateur en choisissant son rôle, son nom d'utilisateur, son mot de passe, ainsi que si son compte est actif :
-
-![image-20201015215719077](img/image-20201015215719077.png)
-
-Si on entre un nom d'utilisateur déjà utilisé, un message d'erreur l'indiquant apparaît.
+![image-20210123161558129](img/image-20210123161558129.png)
 
 
 
-Il est aussi possible de modifier les informations d'un utilisateur (sauf son nom):
+Le champ "Actions" sont les actions possiblement réalisables sur les différents utilisateurs:
 
-![image-20201015215923851](img/image-20201015215923851.png)
+- Edit: Permet de modifier les informations de dit utilisateur. Ce bouton redirige vers la page d'édition d'un utilisateur (voir plus bas)
+- Suppresson: Permet de supprimer l'utilisateur
 
 
 
-Finalement, il est possible de supprimer un utilisateur:
+Afin de créer un nouvel utilisateur sur le site, l'administrateur peut utiliser le formulaire suivant:
 
-![image-20201015220129600](img/image-20201015220129600.png)
+![image-20210123161842868](img/image-20210123161842868.png)
+
+
+
+### Page d'édition d'un utilisateur
+
+Cette page permet à un administrateur de modifier les informations d'un utilisateur.
+
+![image-20210123162042652](img/image-20210123162042652.png)
