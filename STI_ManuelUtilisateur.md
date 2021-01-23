@@ -7,9 +7,9 @@
 2. Ouvrir un navigateur et allez sur la page http://localhost:8080/login.php
 
 > Utilisateurs existants:
-> - admin:passw0rd 
-> - prof:password
-> - assistant:password
+> - admin:admin 
+> - prof:prof
+> - assistant:assistant
 
 
 

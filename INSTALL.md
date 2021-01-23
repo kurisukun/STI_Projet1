@@ -16,7 +16,7 @@ Avec le script shell:
 ./run.sh
 ```
 
-Le lancement peut prendre un peu de temps la première fois puisqu'il crée une image Docker pour PHP personnalisée.
+Le lancement peut prendre un peu de temps (vous pouvez aller vous faire un petit :coffee:) la première fois puisqu'il crée une image Docker pour PHP personnalisée.
 
 Après cela, le site devrait être disponible à l'adresse : [http://localhost:8080](http://localhost:8080). La base de données MySQL est aussi disponible en local sur le port `33060`.
 
