@@ -20,13 +20,13 @@ Le lancement peut prendre un peu de temps (vous pouvez aller vous faire un petit
 
 Après cela, le site devrait être disponible à l'adresse : [http://localhost:8080](http://localhost:8080). La base de données MySQL est aussi disponible en local sur le port `33060`.
 
-Les identifiants du compte administrateur sont `admin:admin`
+Les identifiants du compte administrateur sont `admin:admin`.
 
 [phpMyAdmin](https://www.phpmyadmin.net/) est aussi disponible à l'adresse: [http://localhost:8100](http://localhost:8100). Il permet de manager la DB plus facilement.
 
-## Initilisation de la base de données
+## Initialisation de la base de données
 
-De base après la première installation, la base de données est créer mais vide. Il est possible de l'initialiser en se rendant sur la page d'accueil: [http://localhost:8080](http://localhost:8080) et cliquer sur le bouton `Initialize database`. Si cela n'est pas disponible, le script [DB.php](http://localhost:8080/DB.php) peut être accédé manuellement.
+De base après la première installation, la base de données est créée mais vide. Il est possible de l'initialiser en se rendant sur la page d'accueil: [http://localhost:8080](http://localhost:8080) et cliquer sur le bouton `Initialize database`. Si cela n'est pas disponible, le script [DB.php](http://localhost:8080/DB.php) peut être accédé manuellement.
 
 ## Arrêt des conteneurs
 
