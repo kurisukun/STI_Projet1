@@ -1,12 +1,6 @@
-## STI Rapport
+# STI Rapport
 
-
-
-**Auteurs:** Balsiger Gil, Barros Henriques Chris 
-
-
-
-
+**Auteurs:** Balsiger Gil, Barros Henriques Chris
 
 ## Introduction
 

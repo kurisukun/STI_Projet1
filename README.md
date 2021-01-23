@@ -5,6 +5,10 @@
 **Date:** 16 octobre 2020
 
 
+## Installation
+
+L'installation du projet avec Docker est décrite dans le fichier [INSTALL.md](INSTALL.md).
+
 
 ## Manuel Utilisateur
 
