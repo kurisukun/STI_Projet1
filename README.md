@@ -1,8 +1,8 @@
 # STI Projet1 
 
-**Auteurs:** Arn Jérôme, Barros Henriques Chris
+**Auteurs:** Balsiger Gil, Barros Henriques Chris
 
-**Date:** 16 octobre 2020
+**Date:** 24 octobre 2021
 
 
 ## Installation
