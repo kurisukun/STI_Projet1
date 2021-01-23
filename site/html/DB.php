@@ -67,8 +67,8 @@ try {
             'password' => password_hash('prof', PASSWORD_BCRYPT),
             'validity' => 1),
         array('admin' => 0,
-            'login' => 'Assistant',
-            'password' => password_hash('password', PASSWORD_BCRYPT),
+            'login' => 'assistant',
+            'password' => password_hash('assistant', PASSWORD_BCRYPT),
             'validity' => 1),
     );
 
