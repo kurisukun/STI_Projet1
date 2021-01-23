@@ -1,50 +1,84 @@
 <?php
-// début de session
-ob_start();
-session_start();
-?>
-<html>
-<head>
-    <title>Change Password</title>
-</head>
-<body>
-<?php
-    // Create (connect to) SQLite database in file
-    $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
-    // Set errormode to exceptions
-    $file_db->setAttribute(PDO::ATTR_ERRMODE,
-        PDO::ERRMODE_EXCEPTION);
-    // inclusion du layout de la page et de la redirection en cas de non connexion
-    include("header.php");
-    include('redirect.php');
 
-    if (isset($_POST['Modifiy']) && !empty($_POST['password-modifier']) && !empty($_POST['password-modifier_repeat'])){
-        $password = password_hash($_POST['password-modifier'],   PASSWORD_BCRYPT) ;
-        $username = $_SESSION['username'];
+use App\Auth;
+use App\CsrfManager;
+use App\Database;
+use App\Flash;
 
-        // check si les deux mdp correspondent
-        if(password_verify($_POST['password-modifier_repeat'], $password)){
-            try{
-                // modification dans la db
-                $query=$file_db->query("UPDATE collaborators SET password='$password' WHERE `login`='$username';");
-            }catch (Exception $e){}
-        }else{
-            // affichage message d'erreur 
-            echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
-                    <div class='alert alert-danger'>The two password are not the same.</div>
-                </div>";
+require 'includes.php';
+
+$pdo = Database::getInstance()->getPdo();
+Auth::check();
+
+if (!empty($_POST)) {
+    if (isset($_POST['token']) && CsrfManager::checkToken($_POST['token'])) {
+        if (!empty($_POST['password-old']) && !empty($_POST['password-modifier']) && !empty($_POST['password-modifier_repeat'])) {
+            $userId = $_SESSION['user']['id'];
+            $oldPassword = $_POST['password-old'];
+            $password = $_POST['password-modifier'];
+            $password2 = $_POST['password-modifier_repeat'];
+
+            $req = $pdo->prepare('SELECT password FROM collaborators WHERE id = ?');
+            $req->execute([$userId]);
+            $oldPasswordHash = $req->fetchColumn();
+
+            if (password_verify($oldPassword, $oldPasswordHash)) {
+                if ($password === $password2) {
+                    $req = $pdo->prepare("UPDATE collaborators SET password = ? WHERE id = ?");
+                    $req->execute([
+                        password_hash($password, PASSWORD_BCRYPT),
+                        $userId
+                    ]);
+                    Flash::success('Password updated successfully');
+                    header('Location: list_messages.php');
+                    die();
+                } else {
+                    Flash::error('The two new passwords are not the same');
+                }
+            } else {
+                Flash::error('Incorrect old password');
+            }
+        } else {
+            Flash::error('All fields must be filled');
         }
+    } else {
+        Flash::error('Invalid CSRF token');
     }
+}
+
+include 'parts/header.php';
 ?>
 
-<!-- Form for changing password -->
-<div class="container">
-    <h2>Change Password</h2>
-    <form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
-        <input type="password" class="form-control" name="password-modifier" placeholder="Password">
-        <input type="password" class="form-control" name="password-modifier_repeat" placeholder="Repeat Password">
-        <button class="btn" type="Modifiy" name="Modifiy">Modifiy</button>
-    </form>
-</div>
-</body>
-</html>
+    <!-- Form for changing password -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <h1>Change Password</h1>
+                <hr>
+                <form role="form" action="change_password.php" method="post">
+                    <div class="mb-3">
+                        <label for="passold" class="form-label">Old password</label>
+                        <input type="password" class="form-control" name="password-old" id="passold"
+                               placeholder="Password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pass1" class="form-label">New password</label>
+                        <input type="password" class="form-control" name="password-modifier" id="pass1"
+                               placeholder="Password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pass2" class="form-label">Repeat new password</label>
+                        <input type="password" class="form-control" name="password-modifier_repeat" id="pass2"
+                               placeholder="Repeat Password">
+                    </div>
+                    <input type="hidden" name="token" value="<?= CsrfManager::getToken() ?>">
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-primary" type="submit">Change password</button>
+                        <a href="list_messages.php">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<?php include 'parts/footer.php';

@@ -1,84 +1,130 @@
 <?php
-    ob_start();
-    session_start();
-    include("header.php");
-    include("redirect.php");
-?>
+
+use App\Auth;
+use App\CsrfManager;
+use App\Database;
+use App\Flash;
+
+require 'includes.php';
+
+Auth::check();
+$pdo = Database::getInstance()->getPdo();
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Message</title>
-</head>
-<body>
+if (!empty($_POST)) {
+    if (isset($_POST['token']) && CsrfManager::checkToken($_POST['token'])) {
+        if (isset($_POST['title']) && isset($_POST['contact']) && isset($_POST['message'])) {
+            // On récupère toutes les informations inscrites dans le formulaire
+            $title = $_POST["title"];
 
-<div class="container">
+            if (isset($_POST['old_message'])) {
+                $message = htmlentities($_POST["message"]) . "\r\n\r\n" . htmlentities($_POST["old_message"]);
+            } else {
+                $message = htmlentities($_POST["message"]);
+            }
 
-    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
+            $time = date('Y-m-d H:i:s');
+            $senderId = $_SESSION['user']['id'];
+            $receiverId = $_POST['contact'];
 
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="title">Title</label>
-                <input type="text" class="form-control" name="title" id="title" value="<?php if(isset($_SESSION['retitle'])) echo $_SESSION['retitle']?>"/>
-            </div>
-            <div class="form-group col-md-6">
-                <label for="contact">Contact</label>
-                <input type="text" class="form-control" name="contact" id="contact" value="<?php if(isset($_SESSION['receiver'])) echo $_SESSION['receiver']?>"/>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="message">Message</label>
-            <textarea class="form-control" name="message" id="message"></textarea>
-        </div>
-        <div>
-            <input type="submit" value="Envoyer" class="form-control" type="Envoyer" name="Envoyer"/>
-        </div>
-    </form>
+            $req = $pdo->prepare("SELECT COUNT(*) as count FROM collaborators WHERE id=?");
+            $req->execute([$receiverId]);
+            $count = $req->fetch()['count'];
 
-
-<?php
-
-if (isset($_POST['Envoyer']) /*&& !empty($_POST['title']) && !empty($_POST['contact'])*/){
-    // Create (connect to) SQLite database in file
-    $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
-    // Set errormode to exceptions
-    $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    // On récupère toutes les informations inscrites dans le formulaire
-    $title = $_POST["title"];
-    $message = $_POST["message"];
-    $time = date('Y-m-d H:i:s');
-    $sender = $_SESSION['username'];
-    $sender_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$sender';")->fetch();
-    $sender_id = $sender_query['id'];
-    $receiver = $_POST['contact'];
-    
-    // Si le contact ou le titre du message n'est pas renseigné, on affiche une erreur
-    if(empty($receiver) || empty($title)){
-        echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
-                    <div class='alert alert-danger'> The title and contact fields must be filled in </div>
-                </div>";
-    }
-    else{
-        $receiver_query = $file_db->query("SELECT id FROM collaborators WHERE `login`='$receiver'")->fetch();
-        $receiver_id = $receiver_query['id'];
-
-        //On vérifie bien que le contact adressé existe bien dans la base de données
-        if(empty($receiver_id)){
-            echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
-                        <div class='alert alert-danger'> {$receiver} user does not exist! </div>
-                    </div>";
-        }           
-        else{
-            // Envoi du message
-            $file_db->exec(" INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES ('$title', '$message', '$time', '$sender_id', '$receiver_id');");
+            if ($count === '1') {
+                $req = $pdo->prepare("INSERT INTO messages (title, content, time_value, idExpediteur, idDestinataire) VALUES (?, ?, ?, ?, ?);");
+                $result = $req->execute([
+                    $title,
+                    $message,
+                    $time,
+                    $senderId,
+                    $receiverId
+                ]);
+                if ($result) {
+                    Flash::success("Message sent successfully");
+                    header('Location: list_messages.php');
+                } else {
+                    Flash::error("An error occured whiled sending the message");
+                    header('Location: message.php');
+                }
+                die();
+            } else {
+                Flash::error("Contact doesn't exist");
+            }
+            //On vérifie bien que le contact adressé existe bien dans la base de données
+        } else {
+            Flash::error('Some field are not filled successfully');
         }
+    } else {
+        Flash::error('Invalid CSRF token');
     }
 }
-    //unset($pdo);
+
+$doAnswer = false;
+$message = [];
+
+$contacts = $pdo->query("SELECT * FROM collaborators")->fetchAll();
+
+if (isset($_GET['answer_to'])) {
+    $id = $_GET['answer_to'];
+
+    // On vérifie si le message est bien pour l'utilisateur actuellement connecté
+    $req = $pdo->prepare("SELECT * FROM messages INNER JOIN collaborators ON messages.idExpediteur = collaborators.id WHERE messages.id=:message_id AND idDestinataire=:user_id");
+    $res = $req->execute(['message_id' => $id, 'user_id' => $_SESSION['user']['id']]);
+    $message = $req->fetch();
+
+    if ($message) {
+        $doAnswer = true;
+    } else {
+        Flash::error("This message doesn't exist");
+        header('Location: list_messages.php');
+        die();
+    }
+}
+
+
+include 'parts/header.php';
 ?>
-</div>
-</body>
-</html>
+
+    <div class="container">
+        <h1><?= $doAnswer ? 'Reply to ' . $message['login'] : 'New message' ?></h1>
+        <hr>
+        <?php if ($doAnswer): ?>
+            <div class="card mb-3">
+                <div class="card-header">
+                    Message
+                </div>
+                <div class="card-body">
+                    <?= $message['content'] ?>
+                </div>
+            </div>
+        <?php endif; ?>
+        <form action="message.php" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="title">Title</label>
+                <input type="text" class="form-control" name="title" id="title"
+                       value="<?= $doAnswer ? 'Re: ' . $message['title'] : '' ?>"/>
+            </div>
+            <?php if ($doAnswer): ?>
+                <input type="hidden" name="contact" value="<?= $message['idExpediteur'] ?>">
+                <input type="hidden" name="old_message" value="<?= $message['content'] ?>">
+            <?php else: ?>
+                <div class="mb-3">
+                    <label class="form-label" for="contact">Contact</label>
+                    <select name="contact" id="contact" class="form-control">
+                        <?php foreach ($contacts as $contact): ?>
+                            <option value="<?= $contact['id'] ?>"><?= $contact['login'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php endif; ?>
+            <div class="mb-3">
+                <label class="form-label" for="message">Message</label>
+                <textarea class="form-control" name="message" id="message" rows="10"></textarea>
+            </div>
+            <input type="hidden" name="token" value="<?= CsrfManager::getToken() ?>">
+            <button type="submit" class="btn btn-primary btn-lg"><?= $doAnswer ? 'Reply' : 'Send' ?></button>
+            <a href="list_messages.php">Cancel</a>
+        </form>
+    </div>
+<?php include 'parts/footer.php';

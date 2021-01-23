@@ -1,90 +1,77 @@
 <?php
-ob_start();
-session_start();
-?>
 
-<html lang="fr">
-<title>
-    Page de login
-</title>
+use App\Database;
+use App\Flash;
 
-<head>
-    <title>Sti_project</title>
- 
-</head>
+require 'includes.php';
 
-<?php  include("header.php");?>
+if(isset($_SESSION['user'])) {
+    header('Location: list_messages.php');
+    die();
+}
 
-<h2>Enter Username and Password</h2>
-<div class="container form-signin">
-    <?php
+if (empty($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
+$token = $_SESSION['token'];
 
-    // Set default timezone
-    date_default_timezone_set('UTC');
 
-    /**************************************
-     * Create databases and                *
-     * open connections                    *
-     **************************************/
+/***************************************
+ * Create databases and                *
+ * open connections                    *
+ **************************************/
 
-    // Create (connect to) SQLite database in file
-    $file_db = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
-    // Set errormode to exceptions
-    $file_db->setAttribute(PDO::ATTR_ERRMODE,
-        PDO::ERRMODE_EXCEPTION);
+// Create (connect to) SQLite database in file
+$pdo = Database::getInstance()->getPdo();
 
-    if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['password'])) {
-        $username = $_POST['username'];
+if (!empty($_POST['token'])) {
+    if(hash_equals($_SESSION['token'], $_POST['token'])){
+        if (!empty($_POST['username']) && !empty($_POST['password'])) {
+            $username = $_POST['username'];
 
-        try{
             // récupère l'utilisateur s'il existe dans la db
-            $row=$file_db->query("SELECT COUNT(*) as count FROM collaborators WHERE `login`='$username'")->fetch();
+            $req = $pdo->prepare("SELECT * FROM collaborators WHERE login=:username");
+            $req->execute(['username' => $username]);
+            $data = $req->fetch();
             // récupère les données correspondantes
-            $password_db=$file_db->query("SELECT password,validity FROM collaborators WHERE `login`='$username'")->fetch();
-        } catch (Exception $e) {}
 
-        $count=$row['count'];
-        // si l'utilisateur n'existe pas ou que les mdp ou qu'il est invalide sont pas correct on refuse la connexion
-        if ($count > 0 && password_verify($_POST['password'], $password_db['password']) && $password_db['validity'] > 0) {
-            $row = '';
-            try{
-                // récuère les données pour set la session
-                $row=$file_db->query("SELECT * FROM collaborators WHERE `login`='$username'")->fetch();
-            }catch (Exception $e) {}
-            // set de la session standard
-            $_SESSION['username'] = $username;
-            // set de la session admin
-            if($row['admin'] == 1){
-                $_SESSION['admin'] = $row['admin'];
+            // si l'utilisateur n'existe pas ou que les mdp ou qu'il est invalide sont pas correct on refuse la connexion
+            if($data) {
+                if (password_verify($_POST['password'], $data['password']) && $data['validity'] === '1') {
+                    $_SESSION['user'] = $data;
+                    Flash::success("Login successful");
+                    header('Location: list_messages.php');
+                    die();
+                } else {
+                    Flash::error('Wrong username or password');
+                }
             }
-
-            header('Location: list_messages.php');
-        } else {
-            echo "  <div class='m-3 d-flex align-items-center justify-content-center'>
-                    <div class='alert alert-danger'>Wrong username or password.</div>
-                </div>";
         }
     }
-    ?>
+}
 
-
-</div> <!-- /container -->
-
-<div class="container">
-
-    <form class="form-signin" role="form"
-          action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);
-          ?>" method="post">
-        <input type="text" class="form-control"
-               name="username" placeholder="username"
-               required autofocus></br>
-        <input type="password" class="form-control"
-               name="password" placeholder="password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit"
-                name="login">Login
-        </button>
-    </form>
-</div>
-
-</body>
-</html>
+include 'parts/header.php';
+?>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <h1>Login</h1>
+                <hr>
+                <p class="text-muted">Enter Username and Password</p>
+                <form role="form" action="login.php" method="post">
+                    <div class="mb-3">
+                        <input type="text" class="form-control"
+                               name="username" placeholder="Username"
+                               required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control"
+                               name="password" placeholder="Password" required>
+                    </div>
+                    <input type="hidden" name="token" value="<?php echo $token?>">
+                    <button class="btn btn-lg btn-primary d-block mx-auto" type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+<?php include 'parts/footer.php';
