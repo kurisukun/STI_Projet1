@@ -29,7 +29,7 @@ On a PHP-fpm qui est un service, on a Nginx qui est notre serveur et MySQL pour 
 - Le répertoire "site" contient deux sous-dossiers
   - Le dossier "classes" qui contient toutes les classes importantes pour l'implémentation des fonctionnalités principales
   - Le dossier "html" qui contient l'ensemble des pages du site ainsi que les fiches de style 
-
+- Le répertoire "rapport" contient le rapport du projet 
 - Le fichier "Dockerfile" s'occupe de créer le service PHP
 - Le fichier "docker-compose.yml" qui crée les volumes nécessaires et de lancer les différents conteneurs
 
