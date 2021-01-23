@@ -6,6 +6,8 @@
 
 Le projet vise à trouver des menaces existantes sur le projet 1 et à le modifier de telle sorte que l'application soit sécurisée sans pour autant que cela ne soit au détriment des fonctionnalités déjà mises en place. 
 
+Pour cela, une description du système ainsi qu'une analyse des sources de menace et des vulnérabilités sera faite en la justifiant à l'aide d'un scénario adapté à chacune des vulnérabilités.
+
 
 
 ## Description du système
@@ -13,6 +15,10 @@ Le projet vise à trouver des menaces existantes sur le projet 1 et à le modifi
 
 
 ### DFD
+
+![](img/dataflow_diagram.png)
+
+
 
 ### Identifier les biens
 
@@ -108,7 +114,11 @@ Les injections demandent de les faire à l'aveugle ou peut-être de faire des in
 
 ### Scenario 2 - XSS
 
-On pourrait envoyer un message contenant du Javascript à l'administrateur à l'intérieur. Ce script pourrait permettre de créer un utilisateur ayant lui aussi les droits admin avec les crendentials voulus. Sinon il est bien entendu possible de simplement nuire à l'expérience utilisateur (faire apparaître des pop-up répétés, supprimer ses messages)
+On pourrait envoyer un message contenant du Javascript à l'administrateur à l'intérieur. Ce script pourrait permettre de créer un utilisateur ayant lui aussi les droits admin avec les crendentials voulus. Sinon il est bien entendu possible de simplement nuire à l'expérience utilisateur (faire apparaître des pop-up répétés, supprimer ses messages).
+
+On pourrait imaginer ceci:
+
+On envoie un message à un admin contenant la balise `<script>` et dont la payload effectuerait une requête POST sur la page admin.php et qui créerait un autre utilisateur admin avec les credentials voulus. Comme la cible est un admin, ce dernier a bien les droits de créer un nouvel utilisateur et l'attaque fonctionnerait. 
 
 L'impact sur le business est le même que pour le précédent.
 
@@ -116,7 +126,7 @@ Vu la facilité, toute personne voulant nuire peut effectuer ce genre d'attaque.
 
 **Contre-mesures**
 
-- Empêcher l'interprétation des balises `<script>` pour empêcher le lancement de code Javascript
+- Empêcher l'interprétation des balises `<script>` pour empêcher le lancement de code Javascript en faisant du sanitize sur les inputs utilisateurs.
 
 ### Scenario 3 - CSRF
 
@@ -129,16 +139,16 @@ Ce type d'attaque un peu moins connu que XSS mais assez facile à réaliser puis
 
 **Contre-mesures**
 
-- Mettre en place un système de tokens CSRF
+- Mettre en place un système de tokens CSRF avec des hidden input pour chaque formulaire présent dans le site
 
 
 ### Scenario 4 - Bad Access Control
 
-Un attaquant peut modifier le HTML pour que le bouton de suppression d'un message en supprime un qui ne lui apparatient pas. 
+Un attaquant peut modifier le HTML pour que le bouton de suppression d'un message en supprime un qui ne lui apparatient pas, notamment l'id et qui référence le message à supprimer. 
 
 L'impact sur le business est plus minime mais nuit tout de même à l'expérience utilisateur.
 
-Ce type d'attaque est très facile à mettre en place mais n'apporte pas grand chose en terme de données donc seuls les script-kiddies seraient intéressés.
+Ce type d'attaque est très facile à mettre en place mais n'apporte pas grand chose en terme de données donc seuls les script-kiddies seraient intéressés par ce genre d'attaque.
 
 
 
@@ -160,5 +170,11 @@ Les failles peuvent exister indépendamment d'un exploit. Cela peut donc dans ce
 
 - Mettre les logiciels à jour
 
+
+
 ## Conclusion
+
+La plupart des vulnérabilités traitées ici font parties du fameux top 10 d'OWASP. On a constaté que ces erreurs sont très faciles à faire et mettent en danger une application Web mais tout en étant tout aussi facilement remédiables. 
+
+On peut ainsi dire qu'il n'en faut pas beaucoup dans le cycle de développement d'un projet afin que ce dernier soit bien plus sécurisé.
 
