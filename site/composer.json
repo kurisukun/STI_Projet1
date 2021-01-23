@@ -6,7 +6,10 @@
     "authors": [
         {
             "name": "Gil Balsiger",
-            "email": "gil.balsiger@gmail.com"
+            "email": "gil.balsiger@heig-vd.ch"
+        },
+        {
+            "name": "Chris Barros Henriques"
         }
     ],
     "autoload": {
