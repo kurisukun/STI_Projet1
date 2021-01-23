@@ -2,7 +2,7 @@
 
 L'installation se fait avec Docker et la commande `docker-compose`.
 
-Nous avons simplifier l'exécution des commandes dans un Makefile. Si vous n'avez la commande `make` de disponible, un script `run.sh` est disponible pour lancer les conteneurs.
+Nous avons simplifié l'exécution des commandes dans un Makefile. Si vous n'avez la commande `make` de disponible, un script `run.sh` est disponible pour lancer les conteneurs.
 
 ## Initialisation des conteneurs
 
@@ -20,7 +20,9 @@ Le lancement peut prendre un peu de temps (vous pouvez aller vous faire un petit
 
 Après cela, le site devrait être disponible à l'adresse : [http://localhost:8080](http://localhost:8080). La base de données MySQL est aussi disponible en local sur le port `33060`.
 
-[phpMyAdmin]() est aussi disponible à l'adresse: [http://localhost:8100](http://localhost:8100). Il permet de manager la DB plus facilement.
+Les identifiants du compte administrateur sont `admin:admin`
+
+[phpMyAdmin](https://www.phpmyadmin.net/) est aussi disponible à l'adresse: [http://localhost:8100](http://localhost:8100). Il permet de manager la DB plus facilement.
 
 ## Initilisation de la base de données
 
