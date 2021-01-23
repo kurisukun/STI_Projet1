@@ -14,10 +14,6 @@ L'installation du projet avec Docker est décrite dans le fichier [INSTALL.md](I
 
 Repo du premier projet de STI. Le manuel d'utilisateur est disponible [ici](./STI_ManuelUtilisateur.md).
 
-Il indique comment installer et lancer l'application au moyen d'un script bash et de Docker.
-
-
-
 ## Différences d'infrastructure avec le projet 1
 
 On a PHP-fpm qui est un service, on a Nginx qui est notre serveur et MySQL pour la base de données plutôt que SQLite. 
